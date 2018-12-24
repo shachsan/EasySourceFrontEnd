@@ -14,13 +14,40 @@
     <h4>Please select from the following options</h4>
     <div id="wrapper">
         <div id="buyer-options">
-        <ul id="buyer-selection">
-            <li id="all">Show all products</li>
+            
+            <!-- navbar for Search options begins here -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                        <a class="navbar-brand" href="#">Search Products By</a>
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                          <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                          <ul class="navbar-nav" id="buyer-selection">
+                            <li class="nav-item active">
+                              <a class="nav-link" href="#">Barcode </a>
+                              <input type="text" style="display:none" placeholder="Enter Barcode"/>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" href="#">Name</a>
+                              <input type="text" style="display:none" placeholder="Enter Name"/>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" href="#">Vendor</a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" href="#">Category</a>
+                            </li>
+                          </ul>
+                        </div>
+                </nav>
+                    <!-- End of nav bar Search options -->
+        <!-- <ul>
+            <li id="all"></li>
             <li id="barcode">Search Product by Barcode</li>
             <li id="name">Search Product by Name</li>
             <li id="vendor">Search Product by Vendor</li>
             <li id="cat">Search Product by Category</li>
-        </ul>
+        </ul> -->
         </div>
         <div id="option-selected" style="display:none;">
                

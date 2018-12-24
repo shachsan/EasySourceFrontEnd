@@ -2,24 +2,29 @@
 const ulBuyerSelector = document.getElementById("buyer-selection");
 ulBuyerSelector.addEventListener('click', processSelection);
 const divDisplaySelection = document.getElementById("option-selected");
+fetchAllProducts();
 
 function processSelection(e){
-
-    if (e.target.id==="barcode"){
-        barcodeInputForm();
-        divDisplaySelection.style.display = "inline-block";
-    }else if (e.target.id==="all"){
-        fetchAllProducts();
-        divDisplaySelection.style.display = "block";
-    }else if (e.target.id==="name"){
-        nameInputForm();
-        divDisplaySelection.style.display = "block";
-    }else if (e.target.id==="vendor"){
-        fetchVendors();
-        divDisplaySelection.style.display = "block";
-    }else if (e.target.id==="cat"){
-        fetchCategory();
-        divDisplaySelection.style.display = "block";
+    console.log(e.target);
+    if (e.target.innerText==="Barcode"){
+        const inputBarcode=e.target.nextElementSibling
+        inputBarcode.style.display="inline";
+        inputBarcode.addEventListener('keyup', searchByBarcode)
+        // barcodeInputForm();
+        // divDisplaySelection.style.display = "inline-block";
+    // }else if (e.target.id==="all"){
+    //     fetchAllProducts();
+    //     divDisplaySelection.style.display = "block";
+    }else if (e.target.innerText==="Name"){
+        e.target.nextElementSibling.style.display="inline";
+        // nameInputForm();
+        // divDisplaySelection.style.display = "block";
+    }else if (e.target.innerText==="Vendor"){
+        fetchVendors(e.target);
+        // divDisplaySelection.style.display = "block";
+    }else if (e.target.innerText==="Category"){
+        fetchCategory(e.target);
+        // divDisplaySelection.style.display = "block";
     }
 }
 
@@ -40,15 +45,16 @@ function nameInputForm(){
 }
 
 
-function fetchVendors(){
+function fetchVendors(ele){ //ele is current target element. It is passed when clicked on search by vendor and it will be passed to createVendorSelectBox 
+                            //function so that the select box can be appended into it.
     fetch('http://localhost:3000/api/v1/vendors')
         .then(res => res.json())
-        .then(vendors => createVendorSelectBox(vendors));
+        .then(vendors => createVendorSelectBox(vendors, ele));
  
 }
 
 
-function createVendorSelectBox(vendors){
+function createVendorSelectBox(vendors, ele){
     const vendorSelBox=document.createElement('select');
     for(let vendor of vendors){
         const option=document.createElement('option');
@@ -56,18 +62,19 @@ function createVendorSelectBox(vendors){
         option.innerText = vendor.name;
         vendorSelBox.append(option);
     }
-    divDisplaySelection.innerHTML="";
-    divDisplaySelection.append(vendorSelBox);
+    ele.parentNode.append(vendorSelBox);
+    // divDisplaySelection.innerHTML="";
+    // divDisplaySelection.append(vendorSelBox);
 }
 
-function fetchCategory(){
+function fetchCategory(ele){
     fetch('http://localhost:3000/api/v1/categories')
         .then(res => res.json())
-        .then(cats => createCategorySelectBox(cats));
+        .then(cats => createCategorySelectBox(cats, ele));
  
 }
 
-function createCategorySelectBox(cats){
+function createCategorySelectBox(cats, ele){
     const categorySelBox=document.createElement('select');
     for(let cat of cats){
         const option=document.createElement('option');
@@ -75,8 +82,9 @@ function createCategorySelectBox(cats){
         option.innerText = cat.main_cat;
         categorySelBox.append(option);
     }
-    divDisplaySelection.innerHTML="";
-    divDisplaySelection.append(categorySelBox);
+    ele.parentNode.append(categorySelBox);
+    // divDisplaySelection.innerHTML="";
+    // divDisplaySelection.append(categorySelBox);
 }
 
 function fetchAllProducts(){
@@ -91,6 +99,7 @@ function showAllProducts(products){
     // divProduct.setAttribute("class","card-deck")
     for(let product of products){
         const divCard = document.createElement('div');
+        divCard.setAttribute('class', 'product');
         const divProductDetail = document.createElement('div')
         divProductDetail.style.display="inline-block";
         // divCard.setAttribute("class", "card");//uncomment for imgCard1
@@ -127,6 +136,7 @@ function showAllProducts(products){
     }
     divDisplaySelection.innerHTML="";
     divDisplaySelection.append(divProduct);
+    divDisplaySelection.style.display = "block";
 
 
 }
@@ -150,6 +160,12 @@ function showVendorDetail(vendorDetail){
         div.append(ul);
     }
     return div;
+}
+
+function searchByBarcode(e){
+    let searchBarcode=e.target.value;
+
+    console.log(divDisplaySelection);
 }
 
 // function imgCard(img_url){

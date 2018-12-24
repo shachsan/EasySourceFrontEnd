@@ -5,21 +5,24 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="../javascript/jquery-3.3.1.js"></script>
     <script type="text/javascript" src="../javascript/easySource.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" type="text/css" href="../css/image.css"> -->
     <title>Document</title>
 </head>
 <body>
     <h1>Welcome to EasySource</h1>
     <h4>Please select from the following options</h4>
-    <div id="wrapper">
+    <div id="wrapper" class="row">
         <div id="buyer-options">
         <ul id="buyer-selection">
+            <li id="all">Show all products</li>
             <li id="barcode">Search Product by Barcode</li>
             <li id="name">Search Product by Name</li>
             <li id="vendor">Search Product by Vendor</li>
             <li id="cat">Search Product by Category</li>
         </ul>
         </div>
-        <div id="option-selected" style="display:none;">
+        <div id="option-selected" style="display:none;" class="row">
 
         </div>
     </div>

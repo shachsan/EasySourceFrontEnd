@@ -16,9 +16,9 @@ function processSelection(e){
     //     fetchAllProducts();
     //     divDisplaySelection.style.display = "block";
     }else if (e.target.innerText==="Name"){
-        e.target.nextElementSibling.style.display="inline";
-        // nameInputForm();
-        // divDisplaySelection.style.display = "block";
+        const inputName=e.target.nextElementSibling
+        inputName.style.display="inline";
+        inputName.addEventListener('keyup', searchByName)
     }else if (e.target.innerText==="Vendor"){
         fetchVendors(e.target);
         // divDisplaySelection.style.display = "block";
@@ -163,12 +163,34 @@ function showVendorDetail(vendorDetail){
     return div;
 }
 
+
+//Search functions--------------Search By Barcode
 function searchByBarcode(e){
     let searchBarcode=e.target.value;
     let spanBarcodes=document.querySelectorAll(".barcode");
     spanBarcodes.forEach(function(spanBar){
         let parentDiv=spanBar.parentNode.parentNode.parentNode.parentNode.parentNode;
         if(spanBar.innerText.startsWith(searchBarcode)){
+            parentDiv.style.display='block';
+            // while(parentDiv.className!=='product'){
+            
+            //         parentDiv=parentDiv.parentNode
+            // }
+            // parentDiv.style.display='block';
+        }else{
+            parentDiv.style.display='none';
+        }
+    })
+}
+
+
+///Search By Name-------------
+function searchByName(e){
+    let searchName=e.target.value;
+    let spanNames=document.querySelectorAll(".name");
+    spanNames.forEach(function(spanName){
+        let parentDiv=spanName.parentNode.parentNode.parentNode.parentNode.parentNode;
+        if(spanName.innerText.toLowerCase().includes(searchName.toLowerCase())){
             parentDiv.style.display='block';
             // while(parentDiv.className!=='product'){
             

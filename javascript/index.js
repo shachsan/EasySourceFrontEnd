@@ -96,6 +96,7 @@ function fetchAllProducts(){
 function showAllProducts(products){
     
     const divProduct = document.createElement('div');
+    divProduct.setAttribute('class', 'all-products')
     // divProduct.setAttribute("class","card-deck")
     for(let product of products){
         const divCard = document.createElement('div');
@@ -112,7 +113,7 @@ function showAllProducts(products){
         for(let key in product){
             if(key !== 'id' && key !=='img_url' && key!=='vendor_products'){
                 let li = document.createElement('li');
-                li.innerHTML=`<p>${key}:  ${product[key]}</p>`
+                li.innerHTML=`<p>${key}: <span class=${key}> ${product[key]}</span></p>`
                 ul.append(li);
             }
             if (key === 'vendor_products'){
@@ -164,8 +165,20 @@ function showVendorDetail(vendorDetail){
 
 function searchByBarcode(e){
     let searchBarcode=e.target.value;
-
-    console.log(divDisplaySelection);
+    let spanBarcodes=document.querySelectorAll(".barcode");
+    spanBarcodes.forEach(function(spanBar){
+        let parentDiv=spanBar.parentNode.parentNode.parentNode.parentNode.parentNode;
+        if(spanBar.innerText.startsWith(searchBarcode)){
+            parentDiv.style.display='block';
+            // while(parentDiv.className!=='product'){
+            
+            //         parentDiv=parentDiv.parentNode
+            // }
+            // parentDiv.style.display='block';
+        }else{
+            parentDiv.style.display='none';
+        }
+    })
 }
 
 // function imgCard(img_url){

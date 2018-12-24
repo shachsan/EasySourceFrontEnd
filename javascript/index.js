@@ -2,6 +2,8 @@
 const ulBuyerSelector = document.getElementById("buyer-selection");
 ulBuyerSelector.addEventListener('click', processSelection);
 const divDisplaySelection = document.getElementById("option-selected");
+
+// let spanCats;
 fetchAllProducts();
 
 function processSelection(e){
@@ -10,21 +12,14 @@ function processSelection(e){
         const inputBarcode=e.target.nextElementSibling
         inputBarcode.style.display="inline";
         inputBarcode.addEventListener('keyup', searchByBarcode)
-        // barcodeInputForm();
-        // divDisplaySelection.style.display = "inline-block";
-    // }else if (e.target.id==="all"){
-    //     fetchAllProducts();
-    //     divDisplaySelection.style.display = "block";
     }else if (e.target.innerText==="Name"){
         const inputName=e.target.nextElementSibling
         inputName.style.display="inline";
         inputName.addEventListener('keyup', searchByName)
     }else if (e.target.innerText==="Vendor"){
         fetchVendors(e.target);
-        // divDisplaySelection.style.display = "block";
     }else if (e.target.innerText==="Category"){
         fetchCategory(e.target);
-        // divDisplaySelection.style.display = "block";
     }
 }
 
@@ -63,8 +58,7 @@ function createVendorSelectBox(vendors, ele){
         vendorSelBox.append(option);
     }
     ele.parentNode.append(vendorSelBox);
-    // divDisplaySelection.innerHTML="";
-    // divDisplaySelection.append(vendorSelBox);
+    vendorSelBox.addEventListener('change', searchByVendor)
 }
 
 function fetchCategory(ele){
@@ -83,8 +77,7 @@ function createCategorySelectBox(cats, ele){
         categorySelBox.append(option);
     }
     ele.parentNode.append(categorySelBox);
-    // divDisplaySelection.innerHTML="";
-    // divDisplaySelection.append(categorySelBox);
+    categorySelBox.addEventListener('change', searchByCategory);
 }
 
 function fetchAllProducts(){
@@ -97,17 +90,11 @@ function showAllProducts(products){
     
     const divProduct = document.createElement('div');
     divProduct.setAttribute('class', 'all-products')
-    // divProduct.setAttribute("class","card-deck")
     for(let product of products){
         const divCard = document.createElement('div');
         divCard.setAttribute('class', 'product');
         const divProductDetail = document.createElement('div')
         divProductDetail.style.display="inline-block";
-        // divCard.setAttribute("class", "card");//uncomment for imgCard1
-        // divCard.setAttribute("class", "card")//comment out for imgCard1
-        // divCard.style.width = "18rem";//comment out for imgCard1
-        // divCard.innerHTML = imgCard1(product.img_url);
-        // divProduct.setAttribute("class", "card")
         let divVendors;
         const ul=document.createElement('ul')
         for(let key in product){
@@ -121,7 +108,8 @@ function showAllProducts(products){
                 divVendors.style.display="inline-block";
 
             }
-            
+
+         
         }
         divProductDetail.append(ul);
         
@@ -131,14 +119,15 @@ function showAllProducts(products){
         divCard.append(divImg);
         divCard.append(divProductDetail);
         divCard.append(divVendors);
-        // let card=imgCard(product.img_url);
-        // console.log(typeof(card));
         divProduct.appendChild(divCard);
     }
     divDisplaySelection.innerHTML="";
     divDisplaySelection.append(divProduct);
     divDisplaySelection.style.display = "block";
-
+    
+    //store fresh array of dom elements for search function
+        // spanCats=document.querySelectorAll('.category_type');   
+        // console.log(spanCats); 
 
 }
 
@@ -147,6 +136,9 @@ function showVendorDetail(vendorDetail){
     const div = document.createElement('div');
     for(let vendor of vendorDetail){
         const ul=document.createElement('ul');
+        ul.setAttribute('name', vendor.vendor_name)
+        ul.setAttribute('class', 'vendor')
+        
         ul.style.display="inline-block";
         for(let key in vendor){
             if(key !=='id' && key!=='vendor_id'){
@@ -172,11 +164,6 @@ function searchByBarcode(e){
         let parentDiv=spanBar.parentNode.parentNode.parentNode.parentNode.parentNode;
         if(spanBar.innerText.startsWith(searchBarcode)){
             parentDiv.style.display='block';
-            // while(parentDiv.className!=='product'){
-            
-            //         parentDiv=parentDiv.parentNode
-            // }
-            // parentDiv.style.display='block';
         }else{
             parentDiv.style.display='none';
         }
@@ -192,16 +179,53 @@ function searchByName(e){
         let parentDiv=spanName.parentNode.parentNode.parentNode.parentNode.parentNode;
         if(spanName.innerText.toLowerCase().includes(searchName.toLowerCase())){
             parentDiv.style.display='block';
-            // while(parentDiv.className!=='product'){
             
-            //         parentDiv=parentDiv.parentNode
-            // }
-            // parentDiv.style.display='block';
         }else{
             parentDiv.style.display='none';
         }
     })
 }
+
+
+///Search By Vendor
+
+function searchByVendor(e){
+    let vendor=e.target.value;
+    const ulVendors=document.querySelectorAll('.vendor');
+    console.log(ulVendors);
+    ulVendors.forEach(function(ulVendor){
+        let parentDiv=ulVendor.parentNode.parentNode
+        if(ulVendor.getAttribute('name')===vendor){
+            
+            parentDiv.style.display='block';
+        }else{
+            parentDiv.style.display='none';
+        }
+
+    })
+}
+
+//Search By Category
+
+function searchByCategory(e){
+    let cat=e.target.value;
+    const spanCats=document.querySelectorAll('.category_type');
+    spanCats.forEach(function(spanCat){
+        let parentDiv=spanCat.parentNode.parentNode.parentNode.parentNode.parentNode;
+        parentDiv.style.display='block';
+        if(spanCat.innerText===cat){
+            parentDiv.style.display='block';
+        }else{
+            
+            parentDiv.style.display='none';
+        }
+
+    })
+}
+
+
+
+
 
 // function imgCard(img_url){
 

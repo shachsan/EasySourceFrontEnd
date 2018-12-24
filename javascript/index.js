@@ -7,9 +7,11 @@ const divDisplaySelection = document.getElementById("option-selected");
 fetchAllProducts();
 
 function processSelection(e){
-    console.log(e.target);
+    // console.log(e.target);
     if (e.target.innerText==="Barcode"){
+        
         const inputBarcode=e.target.nextElementSibling
+        // inputBarcode.addEventListener("toggle");
         inputBarcode.style.display="inline";
         inputBarcode.addEventListener('keyup', searchByBarcode)
     }else if (e.target.innerText==="Name"){
@@ -17,9 +19,17 @@ function processSelection(e){
         inputName.style.display="inline";
         inputName.addEventListener('keyup', searchByName)
     }else if (e.target.innerText==="Vendor"){
-        fetchVendors(e.target);
+        if (e.target.nextElementSibling){
+            e.target.nextElementSibling.remove();
+        }else{
+            fetchVendors(e.target);
+        }
     }else if (e.target.innerText==="Category"){
-        fetchCategory(e.target);
+        if (e.target.nextElementSibling){
+            e.target.nextElementSibling.remove();
+        }else{
+            fetchCategory(e.target);
+        }
     }
 }
 
@@ -58,6 +68,7 @@ function createVendorSelectBox(vendors, ele){
         vendorSelBox.append(option);
     }
     ele.parentNode.append(vendorSelBox);
+    ele.style.display='inline';
     vendorSelBox.addEventListener('change', searchByVendor)
 }
 

@@ -5,15 +5,77 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="../javascript/jquery-3.3.1.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <!-- <link rel="stylesheet" type="text/css" href="../css/image.css"> -->
+    <link rel="stylesheet" type="text/css" href="../css/image.css">
     <title>Document</title>
 </head>
 <body>
 
-    
+    <!-- Vendor index page that needs to be toggled -->
+    <div id="vendor">
+        <h1>Welcome to EasySource, wholesaler page</h1>
+            <div id="vendor-options">
+            
+                <!-- navbar for Search options begins here -->
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                            <a class="navbar-brand" href="#">Search Products By</a>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                              <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarNav">
+                              <ul class="navbar-nav" id="buyer-selection">
+                                <li class="nav-item active">
+                                  <a class="nav-link" href="#">Barcode </a>
+                                  <input type="text" style="display:none" placeholder="Enter Barcode"/>
+                                </li>
+                                <li class="nav-item">
+                                  <a class="nav-link" href="#">Name</a>
+                                  <input type="text" style="display:none" placeholder="Enter Name"/>
+                                </li>
+                                <li class="nav-item">
+                                  <a class="nav-link" href="#">My Buyers</a>
+                                </li>
+                                <li class="nav-item">
+                                  <a class="nav-link" href="#">Category</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Order History</a>
+                                </li>
+                              </ul>
+                            </div>
+                    </nav>
+            </div>
+            <div id="main">
+
+                <div id="vendor-info">
+
+                </div>
+
+                <div id="all-product">
+                    <table id="product-table">
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                                <th>Size</th>
+                                <th>Barcode</th>
+                                <th>Brand</th>
+                                <th>Category</th>
+                                <!-- <th>Item#</th>
+                                <th>Case Price</th> -->
+                                <th>Actions</th>
+                            </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- End of vendor page -->
+
+    <div id="wrapper">
     <h1>Welcome to EasySource</h1>
     <h4>Please select from the following options</h4>
-    <div id="wrapper">
         <div id="buyer-options">
             
             <!-- navbar for Search options begins here -->
@@ -54,7 +116,7 @@
                
         </div>
     </div>
-    <script type="text/javascript" src="../javascript/index.js"></script>
+    <!-- <script type="text/javascript" src="../javascript/index.js"></script> -->
     <script type="text/javascript" src="../javascript/vendor.js"></script>
 </body>
 </html>

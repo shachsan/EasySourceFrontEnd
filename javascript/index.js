@@ -88,6 +88,7 @@ function createCategorySelectBox(cats, ele){
         categorySelBox.append(option);
     }
     ele.parentNode.append(categorySelBox);
+    ele.style.display='inline';
     categorySelBox.addEventListener('change', searchByCategory);
 }
 

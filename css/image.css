@@ -1,8 +1,12 @@
 
 
 #wrapper{
+    display: block;
+} 
+
+#vendor{
     display: none;
-}
+}  
 
 #product-table{
 

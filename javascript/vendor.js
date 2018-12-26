@@ -11,8 +11,10 @@ tableProduct.addEventListener('dblclick', tableAction);
 tableProduct.addEventListener('click', tableActionOnSingleClick);
 buttonAddNewBtn.addEventListener('click', addNewItem);
 
+//Base URL for api
+const baseUrl=`http://localhost:3000/api/v1/`;
 
-let vendorId=6;//hardcoded id for testing, set this id to vendor id once vendor logs in
+let vendorId=1;//hardcoded id for testing, set this id to vendor id once vendor logs in
 
 fetchVendorItems(vendorId);
 
@@ -142,9 +144,17 @@ function showAllVendorItems(vendorDetails){
         //Create Update to toggle with Edit button and set to display none once created
         //make it visible once Edit button is click
         let updateButton=document.createElement('button');
-        updateButton.setAttribute('class', 'item-action')
+        updateButton.setAttribute('class', 'item-action');
+        updateButton.setAttribute('name', 'updateAll');
         updateButton.innerText="Update";
         updateButton.style.display='none';
+
+        //Since the update button works differently, needed 2 update buttons
+        let updtBtnPriceNitem=createTag('button');
+        updtBtnPriceNitem.setAttribute('class', 'item-action');
+        updtBtnPriceNitem.setAttribute('name', 'updatePnI');
+        updtBtnPriceNitem.innerText="Update";
+        updtBtnPriceNitem.style.display='none';
 
         let deleteBtn=document.createElement('button');
         deleteBtn.setAttribute('class', 'item-action')
@@ -153,6 +163,7 @@ function showAllVendorItems(vendorDetails){
 
         cellAction.append(editButton);
         cellAction.append(updateButton);
+        cellAction.append(updtBtnPriceNitem);
         cellAction.append(deleteBtn);
 
         
@@ -191,7 +202,19 @@ function tableAction(eventDblClk){
 }
 
 function tableActionOnSingleClick(eventSingleClk){
-    console.log(eventSingleClk.target);
+    console.log(eventSingleClk.target.name);
+    if(eventSingleClk.target.name==='barcode'){
+        // console.log("barcode filled is click");
+        eventSingleClk.target.addEventListener('keyup', lookupProductForBarcode)
+        // lookupProductForBarcode(eventSingleClk);
+    }
+
+    if(eventSingleClk.target.name==='updatePnI'){
+        // console.log("Update button P&I click");
+        updatePriceAndItemNum(eventSingleClk);
+
+    }
+
     if(eventSingleClk.target.innerText==='Edit'){
         
         let id=eventSingleClk.target.parentNode.parentNode.id;
@@ -265,8 +288,8 @@ function highlightEditableCells(e){
                 // td.firstChild.remove();
             }
         })
-        console.log(updateItems);
-        console.log(vpUpdateObj);
+        // console.log(updateItems);
+        // console.log(vpUpdateObj);
         eve.target.style.display='none';//hide the update button
         eve.target.previousElementSibling.style.display='inline';//display edit button
 
@@ -315,9 +338,95 @@ function addNewItem(){
     })
 }
 
+function createTag(tagName){
+    return document.createElement(tagName);
+}
+
+function getEditBox(){
+    let inputPrice=createTag('input');
+    // inputPrice.setAttribute('name','editPrice')
+    inputPrice.style.width="60px";
+    inputPrice.style.height="30px";
+    
+    return inputPrice;
+}
 
 
 
 function highlightItemNumAndPrice(e){
+    alert("Other vendor also stock this product. So, full edit is not available. Editable cells will be highlighted.")
+    let price=e.target.parentNode.previousElementSibling;
+    // debugger;
+    let editPrice=getEditBox();
+    editPrice.setAttribute('name','editPrice')
+    editPrice.value=price.innerText;
+    // console.log(editPrice.value);
+    price.innerText="";
+    price.append(editPrice);
+
+    let vItem=price.previousElementSibling;
+    let inputItemNum=getEditBox();
+    inputItemNum.setAttribute('name','editItem')
+    inputItemNum.value=vItem.innerText;
+    vItem.innerText="";
+    vItem.append(inputItemNum);
+
+    e.target.style.display='none';//hide the edit button and display update button
+    e.target.nextElementSibling.nextElementSibling.style.display="inline"; //display update P&I button
+    // console.log(e.target.nextElementSibling);
+    // console.log(e.target);
+    // debugger;
+    // if(e.target.innerText==='Update'){
+    //     updatePriceAndItemNum(e,price,editPrice, vItem, inputItemNum);
+    // }
+
+}
+
+function updatePriceAndItemNum(e){
+        let currentRow=e.target.parentNode.parentNode;
+        let tdPrice=e.target.parentNode.previousElementSibling;
+        let tdVitem=tdPrice.previousElementSibling;
+        let newPrice=document.getElementsByName('editPrice')[0];
+        let newItemNum=document.getElementsByName('editItem')[0];
+        
+        let vpid=currentRow.dataset.vpid;
+        let vpUpdateObj={v_item:newItemNum.value, case_price:newPrice.value};
+        tdPrice.innerText=newPrice.value;
+        tdVitem.innerText=newItemNum.value;
+        newPrice.remove();
+        newItemNum.remove();
+        
+        e.target.style.display='none';//hide the update P&I button
+        e.target.previousElementSibling.previousElementSibling.style.display='inline';//display edit button
+
+        //fetch update ---vendor_products for price and v_item
+        
+        fetch(`http://localhost:3000/api/v1/vendor_products/${vpid}`,{
+            method: 'PATCH',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(vpUpdateObj)
+        })
+        //end of vendor_products update
+
     
+
+}
+
+function lookupProductForBarcode(e){
+    let userUpc=e.target.value;
+
+    fetch(baseUrl+'products')
+        .then(res=>res.json())
+        .then(allProducts=>lookupItemByBarcode(allProducts))
+
+    function lookupItemByBarcode(products){
+        for(let product of products){
+            let strBarcode=product.barcode.toString();
+            // console.log(typeof(product.barcode));
+            if(strBarcode.startsWith(userUpc)){
+                console.log(product);
+            }
+        }
+    }
+
 }

@@ -1,11 +1,11 @@
 
 
 #wrapper{
-    display: block;
+    display: none;
 } 
 
 #vendor{
-    display: none;
+    display: block;
 }  
 
 #product-table{
@@ -44,4 +44,10 @@ table {
     padding: 12px 20px;
     margin: 8px 0;
     box-sizing: border-box;
+  }
+
+  #add-product{
+      margin: 5px;
+      float: right;
+      background-color: chartreuse;
   }

@@ -514,6 +514,8 @@ function requiredFields(){
     return attrs;
 }
 
+
+
 function addNewProduct(e){
     let rowCells=getCurrentRowChilds(e);
     let requiredCellsEmpty=false;
@@ -571,38 +573,30 @@ function addNewProduct(e){
             // Product does not exist - fetch post to both products and vp tables
             if(!productExist){
 
+                console.log(productObj);
                 //POST products table
                 fetch(`${baseUrl}products`, {
                     method: 'POST',
                     headers:{'Content-Type':'application/json'},
                     body:JSON.stringify(productObj)
-                }).then(res=>res.json())
-                  .then(justAddedProd=>postVp(justAddedProd))
+                })
+                
                   
-                function postVp(justAddedProd){
-                    console.log("Post to products complete, entering vendor_products POST...");
-                    console.log(justAddedProd);
-                    vpObj.product_id=justAddedProd.id;
-                    vpObj.vendor_id=vendorId;
-                    //POST vendor_products table
-                    fetch(`${baseUrl}vendor_products`, {
-                        method: 'POST',
-                        headers:{'Content-Type':'application/json'},
-                        body:JSON.stringify(vpObj)
-                    })
-
-                }
-
+                // function postVp(justAddedProd){
+                console.log(data.length);
+                vpObj.product_id=data.length+1;
+                vpObj.vendor_id=vendorId;
+                console.log(vpObj);
+                //POST vendor_products table
+                fetch(`${baseUrl}vendor_products`, {
+                    method: 'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify(vpObj)
+                })
 
             }
-            // console.log(data);
-            // if(data.includes)
-            // console.log(productObj);
-            // console.log(vpObj);
-            // data.includes({barcode:`${}`})
+            
         })
-        // getAllProducts()
 
     }
-    // console.log(rowCells.name);
 }

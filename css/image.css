@@ -51,3 +51,34 @@ table {
       float: right;
       background-color: chartreuse;
   }
+
+
+  #item-found{
+      border: 1px solid blue;
+      margin: 10px;
+      padding: 5px;
+      
+  }
+
+
+  .container {
+    width: 100%;
+    background: #eee;
+    margin: 10px auto;
+    padding: 5px;
+    position: relative;
+    text-align:left;
+  }
+
+  .block{
+      /* height: 100%; */
+  }
+
+  .error-msg{
+      background: lightgoldenrodyellow;
+      text-align: center;
+  }
+
+  /* .input-cell:focus {
+      background: transparent;
+  } */

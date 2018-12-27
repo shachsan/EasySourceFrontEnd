@@ -5,6 +5,7 @@ const divVendorInfo = document.getElementById('vendor-info');
 const divProductDetail=document.getElementById('all-product');
 const tableProduct=document.getElementById('product-table');
 const buttonAddNewBtn=document.getElementById('add-product');
+const errorMsg=document.getElementsByClassName('error-msg')[0];
 // let row;
 // console.log(tableProduct);
 tableProduct.addEventListener('dblclick', tableAction);
@@ -17,6 +18,7 @@ const baseUrl=`http://localhost:3000/api/v1/`;
 let vendorId=1;//hardcoded id for testing, set this id to vendor id once vendor logs in
 
 fetchVendorItems(vendorId);
+// fetchAllProducts();
 
 function fetchVendorItems(id){
     fetch(`http://localhost:3000/api/v1/vendors/${vendorId}`)
@@ -26,11 +28,12 @@ function fetchVendorItems(id){
 
 
 function showAllVendorItems(vendorDetails){
-    divVendorInfo.innerHTML=`<p>Name: ${vendorDetails.name}</p>`+
+    divVendorInfo.innerHTML=`<div class="block" style="display:inline-block"><p>Name: ${vendorDetails.name}</p>`+
                             `<p>Username: ${vendorDetails.username}`+
                             `<p>Email: ${vendorDetails.email}`+
                             `<p>Minimum set? : ${vendorDetails.has_min}`+
-                            `<p>Minimum Amount: ${vendorDetails.min_amount}`
+                            `<p>Minimum Amount: ${vendorDetails.min_amount}`+
+                            `</div>`
 
 
     //test code begin 'test1'
@@ -64,7 +67,7 @@ function showAllVendorItems(vendorDetails){
     //     cellSize.innerText = product.size;
     //     cellBarcode.innerText = product.barcode;
     //     cellBrand.innerText = product.brand;
-    //     cellCategory.innerText = product.category_type;
+    //     cellCategory.innerText = product.category_id;
 
     //     let editButton=document.createElement('button');
     //     editButton.setAttribute('class', 'item-action')
@@ -117,7 +120,7 @@ function showAllVendorItems(vendorDetails){
         cellBrand.setAttribute('name', 'brand')
 
         let cellCategory = row.insertCell();
-        cellCategory.setAttribute('name', 'category_type')
+        cellCategory.setAttribute('name', 'category_id')
         
         cellImage.innerHTML = `<img src=${data.img_url} class="table-img">`
         cellName.innerText = data.name;
@@ -202,11 +205,20 @@ function tableAction(eventDblClk){
 }
 
 function tableActionOnSingleClick(eventSingleClk){
+    if(eventSingleClk.target.className==='input-cell'){
+        eventSingleClk.target.style.backgroundColor='transparent';
+        errorMsg.style.display='none';
+    }
     console.log(eventSingleClk.target.name);
     if(eventSingleClk.target.name==='barcode'){
         // console.log("barcode filled is click");
         eventSingleClk.target.addEventListener('keyup', lookupProductForBarcode)
         // lookupProductForBarcode(eventSingleClk);
+    }
+
+    //if add button inside new cell is click
+    if(eventSingleClk.target.id==='add-item'){
+        addNewProduct(eventSingleClk);
     }
 
     if(eventSingleClk.target.name==='updatePnI'){
@@ -231,6 +243,12 @@ function tableActionOnSingleClick(eventSingleClk){
         }
     }
 
+}
+
+function getCurrentRowChilds(e){
+    let currentTr=e.target.parentNode.parentNode;
+    let currentTrChilds=currentTr.childNodes;
+    return currentTrChilds;
 }
 
 function highlightEditableCells(e){
@@ -316,8 +334,13 @@ function highlightEditableCells(e){
 
 }
 
-function getProductAttrs(){
-    let attrs=["img_url", "name", "size", "barcode", "brand", "category_type", "v_item", "case_price"];
+function getProdNvenProdAttrs(){
+    let attrs=["img_url", "name", "size", "barcode", "brand", "category_id", "v_item", "case_price"];
+    return attrs;
+}
+
+function getProdOnlyAttrs(){
+    let attrs=["img_url", "name", "size", "barcode", "brand", "case_pack", "category_id"];
     return attrs;
 }
 
@@ -326,16 +349,30 @@ function addNewItem(){
     let row=tableProduct.insertRow();
     row.style.height="50px";
     
-    getProductAttrs().forEach(function(attr, i){
+    getProdNvenProdAttrs().forEach(function(attr, i){
         let cell=row.insertCell();
 
         if(i!==9){
-            let input=document.createElement('input');
+            let input=createTag('input');
             input.setAttribute('type', 'text');
+            input.setAttribute('class','input-cell')
             input.setAttribute('name',attr)
             cell.append(input);
         }
     })
+
+    let actionCell=row.insertCell();
+    if (requiredFields()!==""){         //requiredFields functions not implemented yet
+        let addBtn=createTag('button')
+        addBtn.innerText='Add';
+        addBtn.setAttribute('id','add-item')
+        actionCell.append(addBtn);
+    }
+}
+
+
+function requiredFields(){//need to implement this functionality, check if the fields are actually empty
+    return false;
 }
 
 function createTag(tagName){
@@ -412,6 +449,32 @@ function updatePriceAndItemNum(e){
 
 }
 
+//separate function to get all products---begin
+
+async function getAllProducts () {
+    try {
+      const resp = await fetch(baseUrl+'products')
+    //   console.log(resp)
+      return resp.json();
+    } catch (err) {
+         console.log(err)
+      }
+ }
+// function fetchAllProducts(){
+//       return  getAllProducts=(data)=>fetch(baseUrl+'products')
+//         .then(res=>res.json())
+//         .then(allProducts=>allProducts)
+
+//         // return data;
+// }
+
+// function getAllProducts(allProducts){
+//     console.log(allProducts);
+//     return allProducts;
+// }
+//separate function to get all products---end
+
+
 function lookupProductForBarcode(e){
     let userUpc=e.target.value;
 
@@ -420,13 +483,126 @@ function lookupProductForBarcode(e){
         .then(allProducts=>lookupItemByBarcode(allProducts))
 
     function lookupItemByBarcode(products){
+        let itemSelectDiv=createTag('div');
+        itemSelectDiv.setAttribute('id', 'item-found');
+        itemSelectDiv.setAttribute('class', 'block');
+        itemSelectDiv.style.display='inline-block';
+        let ul=createTag('ul');
+        
+        
         for(let product of products){
             let strBarcode=product.barcode.toString();
             // console.log(typeof(product.barcode));
             if(strBarcode.startsWith(userUpc)){
+                if(ul.lastChild){
+                    ul.lastChild.remove();
+                }
+                let li=createTag('li');
+                li.innerHTML=`<img width="30px" height="25px" src=${product.img_url}>Name:${product.name} Barcode:${product.barcode}`
+                ul.append(li);
                 console.log(product);
             }
         }
+        itemSelectDiv.append(ul);
+        divVendorInfo.append(itemSelectDiv);
     }
 
+}
+
+function requiredFields(){
+    let attrs=["name", "size", "barcode", "case_price"];
+    return attrs;
+}
+
+function addNewProduct(e){
+    let rowCells=getCurrentRowChilds(e);
+    let requiredCellsEmpty=false;
+    let productExist=false;
+
+    //check if the required fields are empty
+    for(let cell of rowCells){
+        if(requiredFields().includes(cell.firstChild.name) && cell.firstChild.value===''){
+            cell.firstChild.style.backgroundColor="#ff8080";
+            errorMsg.style.display='block';
+            requiredCellsEmpty=true;
+        }
+    }
+
+    if(!requiredCellsEmpty){
+        //check if the product is existing product
+        //if product already exists, fetch post to vendor_products table
+        //if product is not existing product, fetch post both products and vendor_products tables
+        getAllProducts().then((data)=>{
+            let productObj={};
+            let vpObj={};
+
+            //collect user inputs from cells and build product and vp objects
+            for(let cellData of rowCells){
+
+                if(getProdOnlyAttrs().includes(cellData.firstChild.name)){
+                    productObj[cellData.firstChild.name]=cellData.firstChild.value;
+                }else{
+                    vpObj[cellData.firstChild.name]=cellData.firstChild.value;
+                }
+            }
+            
+            //Once objects are build, check if the user entered product is a pre-existing product
+            //if pre-exist, FETCH POST vp tables
+            for(let product of data){
+                if (product.barcode===productObj.barcode){
+                    //prepare vpObj for post method
+                    vpObj.product_id=product.id;
+                    vpObj.vendor_id=vendorId;
+
+                    //fetch post only to vendor_products table
+                    fetch(`${baseUrl}vendor_products`, {
+                        method: 'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify(vpObj)
+                    })
+
+                    productExist=true;     
+                    break;
+                }
+
+            
+            }
+
+            // Product does not exist - fetch post to both products and vp tables
+            if(!productExist){
+
+                //POST products table
+                fetch(`${baseUrl}products`, {
+                    method: 'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify(productObj)
+                }).then(res=>res.json())
+                  .then(justAddedProd=>postVp(justAddedProd))
+                  
+                function postVp(justAddedProd){
+                    console.log("Post to products complete, entering vendor_products POST...");
+                    console.log(justAddedProd);
+                    vpObj.product_id=justAddedProd.id;
+                    vpObj.vendor_id=vendorId;
+                    //POST vendor_products table
+                    fetch(`${baseUrl}vendor_products`, {
+                        method: 'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify(vpObj)
+                    })
+
+                }
+
+
+            }
+            // console.log(data);
+            // if(data.includes)
+            // console.log(productObj);
+            // console.log(vpObj);
+            // data.includes({barcode:`${}`})
+        })
+        // getAllProducts()
+
+    }
+    // console.log(rowCells.name);
 }

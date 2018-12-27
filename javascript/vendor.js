@@ -482,7 +482,11 @@ async function getAllProducts () {
 
 function lookupProductForBarcode(e,allProducts){
     let userUpc=e.target.value
-    
+
+    //On below line, .filter methods remove the null value from the array since map returns undefined for not found item
+    let vendorProductsIds=Array.from(tableProduct.rows).map((row)=>Number(row.id)).filter(i=>i);
+    console.log(vendorProductsIds);
+    // console.log(tableProduct.rows);
 
     if(!userUpc){
         divVendorInfo.firstChild.nextElementSibling.remove();
@@ -504,18 +508,23 @@ function lookupProductForBarcode(e,allProducts){
                     itemSelectDiv.setAttribute('id', 'item-found');
                     itemSelectDiv.setAttribute('class', 'block');
                     itemSelectDiv.style.display='inline-block';
-                    let li=createTag('li');
-                    li.addEventListener('click',populateRow);
-                    // li.dataset.currentRow=e.target.parentNode.parentNode;
-                    li.dataset.id=product.id;
-                    li.dataset.img=product.img_url;
-                    li.dataset.name=product.name;
-                    li.dataset.size=product.size;
-                    li.dataset.barcode=product.barcode;
-                    li.dataset.brand=product.brand;
-                    li.dataset.category_type=product.category_type;
-                    li.innerHTML=`<img width="30px" height="25px" src=${product.img_url}>  Name:${product.name}   Barcode:${product.barcode}`
-                    ul.append(li);
+                    
+                    //do not create li for the items that this vendor already stock
+                    if(!vendorProductsIds.includes(product.id)){
+                        // debugger;
+                        let li=createTag('li');
+                        li.addEventListener('click',populateRow);
+                        // li.dataset.currentRow=e.target.parentNode.parentNode;
+                        li.dataset.id=product.id;
+                        li.dataset.img=product.img_url;
+                        li.dataset.name=product.name;
+                        li.dataset.size=product.size;
+                        li.dataset.barcode=product.barcode;
+                        li.dataset.brand=product.brand;
+                        li.dataset.category_type=product.category_type;
+                        li.innerHTML=`<img width="30px" height="25px" src=${product.img_url}>  Name:${product.name}   Barcode:${product.barcode}`
+                        ul.append(li);
+                    }
                 }
             }
             itemSelectDiv.append(ul);
@@ -589,6 +598,13 @@ function addNewProduct(e){
 
         //if add button's dataset item value is 'exist' do fetch post to vp table
         if(e.target.dataset.item==='exist'){
+
+            //set td innerText to the values of input boxes and remove the inputboxes
+            for(let cell of rowCells){
+                cell.innerText=cell.firstChild.value;
+                // cell.firstChild.remove();
+            }
+
             fetch(`${baseUrl}vendor_products`, {
                 method: 'POST',
                 headers:{'Content-Type':'application/json'},

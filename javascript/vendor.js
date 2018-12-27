@@ -579,8 +579,16 @@ function addNewProduct(e){
                     method: 'POST',
                     headers:{'Content-Type':'application/json'},
                     body:JSON.stringify(productObj)
+                }).then(function(res){
+                    if(!res.ok){
+                        throw Error(res.statusText);
+                    }
+                    console.log(res);
+                }).catch(function(error){
+                    alert('The following error has occurred: \n', error);
                 })
-                
+
+     
                   
                 // function postVp(justAddedProd){
                 console.log(data.length);

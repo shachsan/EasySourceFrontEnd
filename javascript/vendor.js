@@ -396,7 +396,7 @@ function getEditBox(){
 
 
 function highlightItemNumAndPrice(e){
-    alert("Other vendor also stock this product. So, full edit is not available. Editable cells will be highlighted.")
+    alert("Other vendors also stock this product. So, full edit is not available. Editable cells will be highlighted.")
     let price=e.target.parentNode.previousElementSibling;
     // debugger;
     let editPrice=getEditBox();
@@ -488,15 +488,7 @@ function lookupProductForBarcode(e,allProducts){
         divVendorInfo.firstChild.nextElementSibling.remove();
         return;
     }
-    // console.log(userUpc);
-
-    // getAllProducts().then((allProducts)=>{
-
-        // fetch(baseUrl+'products')
-        //     .then(res=>res.json())
-        //     .then(allProducts=>lookupItemByBarcode(allProducts))
-    
-        // function lookupItemByBarcode(products){
+   
             
             if(divVendorInfo.firstChild.nextElementSibling){
                 divVendorInfo.firstChild.nextElementSibling.remove();
@@ -513,6 +505,15 @@ function lookupProductForBarcode(e,allProducts){
                     itemSelectDiv.setAttribute('class', 'block');
                     itemSelectDiv.style.display='inline-block';
                     let li=createTag('li');
+                    li.addEventListener('click',populateRow);
+                    // li.dataset.currentRow=e.target.parentNode.parentNode;
+                    li.dataset.id=product.id;
+                    li.dataset.img=product.img_url;
+                    li.dataset.name=product.name;
+                    li.dataset.size=product.size;
+                    li.dataset.barcode=product.barcode;
+                    li.dataset.brand=product.brand;
+                    li.dataset.category_type=product.category_type;
                     li.innerHTML=`<img width="30px" height="25px" src=${product.img_url}>  Name:${product.name}   Barcode:${product.barcode}`
                     ul.append(li);
                 }
@@ -521,6 +522,31 @@ function lookupProductForBarcode(e,allProducts){
             divVendorInfo.append(itemSelectDiv);
         
     // })
+
+}
+
+function populateRow(){
+    let row=document.getElementsByClassName('input-cell');
+
+    let addBtn=document.getElementById('add-item');
+    addBtn.dataset.item='exist';
+    addBtn.dataset.id=this.dataset.id;
+    // console.log(row);
+    for(let cell of row){
+        if(cell.name==='img_url'){
+            cell.value=this.dataset.img;
+        }else if(cell.name==='name'){
+            cell.value=this.dataset.name;
+        }else if(cell.name==='barcode'){
+            cell.value=this.dataset.barcode;
+        }else if(cell.name==='size'){
+            cell.value=this.dataset.size;
+        }else if(cell.name==='brand'){
+            cell.value=this.dataset.brand;
+        }else if(cell.name==='category_id'){
+            cell.value=this.dataset.category_type;
+        }
+    }
 
 }
 
@@ -537,6 +563,11 @@ function addNewProduct(e){
     let requiredCellsEmpty=false;
     let productExist=false;
 
+    //new added
+    let vendorPrice;
+    let vItem;
+
+
     //check if the required fields are empty
     for(let cell of rowCells){
         if(requiredFields().includes(cell.firstChild.name) && cell.firstChild.value===''){
@@ -544,9 +575,33 @@ function addNewProduct(e){
             errorMsg.style.display='block';
             requiredCellsEmpty=true;
         }
+
+        if(cell.firstChild.name=='case_price' && cell.firstChild.value!==''){
+            vendorPrice=cell.firstChild.value;
+        }
+        
+        if(cell.firstChild.name==='v_item'){
+            vItem=cell.firstChild.value;
+        }
     }
 
     if(!requiredCellsEmpty){
+
+        //if add button's dataset item value is 'exist' do fetch post to vp table
+        if(e.target.dataset.item==='exist'){
+            fetch(`${baseUrl}vendor_products`, {
+                method: 'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({
+                    v_item:vItem,
+                    // e.target.parentNode.previousElementSibling.previousElementSibling.firstChild.value;
+                    case_price:vendorPrice,
+                    product_id:e.target.dataset.id,
+                    vendor_id:vendorId
+                })
+            })
+        }else{
+
         //check if the product is existing product
         //if product already exists, fetch post to vendor_products table
         //if product is not existing product, fetch post both products and vendor_products tables
@@ -621,6 +676,7 @@ function addNewProduct(e){
             }
             
         })
+    }
 
     }
 }

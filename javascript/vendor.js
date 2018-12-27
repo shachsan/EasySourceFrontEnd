@@ -210,10 +210,15 @@ function tableActionOnSingleClick(eventSingleClk){
         errorMsg.style.display='none';
     }
     console.log(eventSingleClk.target.name);
+
     if(eventSingleClk.target.name==='barcode'){
         // console.log("barcode filled is click");
-        eventSingleClk.target.addEventListener('keyup', lookupProductForBarcode)
-        // lookupProductForBarcode(eventSingleClk);
+        getAllProducts().then((allProducts)=>{//added new line
+            // console.log((allProducts));
+            eventSingleClk.target.addEventListener('keyup', function(e){
+                lookupProductForBarcode(e, allProducts)
+            });
+        })//added new line
     }
 
     //if add button inside new cell is click
@@ -475,39 +480,50 @@ async function getAllProducts () {
 //separate function to get all products---end
 
 
-function lookupProductForBarcode(e){
-    let userUpc=e.target.value;
+function lookupProductForBarcode(e,allProducts){
+    let userUpc=e.target.value
+    
 
-    fetch(baseUrl+'products')
-        .then(res=>res.json())
-        .then(allProducts=>lookupItemByBarcode(allProducts))
-
-    function lookupItemByBarcode(products){
-        let itemSelectDiv=createTag('div');
-        itemSelectDiv.setAttribute('id', 'item-found');
-        itemSelectDiv.setAttribute('class', 'block');
-        itemSelectDiv.style.display='inline-block';
-        let ul=createTag('ul');
-        
-        
-        for(let product of products){
-            let strBarcode=product.barcode.toString();
-            // console.log(typeof(product.barcode));
-            if(strBarcode.startsWith(userUpc)){
-                if(ul.lastChild){
-                    ul.lastChild.remove();
-                }
-                let li=createTag('li');
-                li.innerHTML=`<img width="30px" height="25px" src=${product.img_url}>Name:${product.name} Barcode:${product.barcode}`
-                ul.append(li);
-                console.log(product);
-            }
-        }
-        itemSelectDiv.append(ul);
-        divVendorInfo.append(itemSelectDiv);
+    if(!userUpc){
+        divVendorInfo.firstChild.nextElementSibling.remove();
+        return;
     }
+    // console.log(userUpc);
+
+    // getAllProducts().then((allProducts)=>{
+
+        // fetch(baseUrl+'products')
+        //     .then(res=>res.json())
+        //     .then(allProducts=>lookupItemByBarcode(allProducts))
+    
+        // function lookupItemByBarcode(products){
+            
+            if(divVendorInfo.firstChild.nextElementSibling){
+                divVendorInfo.firstChild.nextElementSibling.remove();
+            }
+            
+            let itemSelectDiv=createTag('div');
+            let ul=createTag('ul');
+            for(let product of allProducts){
+                let strBarcode=product.barcode.toString();
+                // console.log(product);
+                // console.log(typeof(product.barcode));
+                if(strBarcode.startsWith(userUpc)){
+                    itemSelectDiv.setAttribute('id', 'item-found');
+                    itemSelectDiv.setAttribute('class', 'block');
+                    itemSelectDiv.style.display='inline-block';
+                    let li=createTag('li');
+                    li.innerHTML=`<img width="30px" height="25px" src=${product.img_url}>  Name:${product.name}   Barcode:${product.barcode}`
+                    ul.append(li);
+                }
+            }
+            itemSelectDiv.append(ul);
+            divVendorInfo.append(itemSelectDiv);
+        
+    // })
 
 }
+
 
 function requiredFields(){
     let attrs=["name", "size", "barcode", "case_price"];

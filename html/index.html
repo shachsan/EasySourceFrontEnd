@@ -4,11 +4,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="../javascript/jquery-3.3.1.js"></script>
+
+    <!-- for login-form start -->
+    <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+
+    <!-- login form end -->
+
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="../css/image.css">
     <title>Document</title>
 </head>
 <body>
+
+<!-- login type div start -->
+
+
+<!-- login type end -->
+
+  <!-- Login Form -- start here -->
+  <section class="login-block" id="login">
+      <div id='login-button' class="log-sign"><button type="button" class="btn btn-outline-dark btn-lg">Login</button></div>
+      <div id='signup-button' class="log-sign"><button type="button" class="btn btn-outline-dark btn-lg">Sign Up</button></div>
+
+      <div id="login-type">Please let us know who you are?<br>
+        <button id="buyer" type="button" class="btn btn-outline-dark btn-lg">Buyer</button>
+        <button id="whlsr" type="button" class="btn btn-outline-dark btn-lg">Wholesale Vendor</button>
+      </div>
+
+      <div style="display: none" class="container">
+        <div class="row">
+          <div class="col-md-4 login-sec">
+            <h2 class="text-center">Login Now</h2>
+            <form class="login-form">
+              <div class="form-group">
+                <label for="exampleInputEmail1" class="text-uppercase">Username</label>
+                <input name="user" type="text" class="form-control" placeholder="">
+      
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1" class="text-uppercase">Password</label>
+                <input name="pass" type="password" class="form-control" placeholder="">
+              </div>
+    
+    
+                <div class="form-check">
+                  <label class="form-check-label">
+                  <input type="checkbox" class="form-check-input">
+                  <small>Remember Me</small>
+                  </label>
+                  <button type="submit" class="btn btn-login float-right">Submit</button>
+                </div>
+    
+            </form>
+          </div>
+
+          <div >
+            <img style="width: 650px" src="https://www.thebalancesmb.com/thmb/W5UcstISAkdS-sBHvuGLrR5FFsQ=/400x250/filters:no_upscale():max_bytes(150000):strip_icc()/162761880-56a7f8523df78cf7729b3600.jpg">
+          </div>
+        </div>
+        
+      </div>
+  </section>
+  <!-- Login From -- Ends here -->
+
+
 
     <!-- Vendor index page that needs to be toggled -->
     <div id="vendor">
@@ -115,10 +179,12 @@
         </ul> -->
         </div>
         <div id="option-selected" style="display:none;">
-               
+              
         </div>
     </div>
     <!-- <script type="text/javascript" src="../javascript/index.js"></script> -->
     <script type="text/javascript" src="../javascript/vendor.js"></script>
+    <script type="text/javascript" src="../javascript/login.js"></script>
+
 </body>
 </html>

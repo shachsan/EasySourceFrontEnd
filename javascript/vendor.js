@@ -814,6 +814,7 @@ function lookupProductForBarcode(e,allProducts){
                     if(!vendorProductsIds.includes(product.id)){
                         // debugger;
                         let li=createTag('li');
+                        li.setAttribute('class','product-exist')
                         li.addEventListener('click',populateRow);
                         // li.dataset.currentRow=e.target.parentNode.parentNode;
                         li.dataset.id=product.id;

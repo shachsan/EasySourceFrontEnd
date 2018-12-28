@@ -1,6 +1,382 @@
-const buyerPage = document.getElementById('wrapper');
-buyerPage.style.display='none';
-const divMain=document.getElementById('main');
+$(function(){
+
+    
+    let loginType; 
+    let baseUrl='http://localhost:3000/api/v1/';
+    function createTag(tagName){
+        return document.createElement(tagName);
+    }
+
+    /////login Js script -------start here ----------
+    $("#login-button").click(function(){
+        $(this).fadeOut();
+        $("#signup-button").fadeOut();
+        $("#login-type").fadeIn();
+    })
+
+    $("#buyer").click(function(){
+        loginType="buyer";
+        $("#login-type").fadeOut();
+        $(".container").fadeIn();
+    })
+
+    $("#whlsr").click(function(){
+        loginType="vendor"
+        $("#login-type").fadeOut();
+        $(".container").fadeIn();
+    
+    })
+
+    $(".login-form").submit(function(){
+        event.preventDefault();
+        let username=this.user.value;
+        let email=this.email.value;
+        console.log(username);
+        console.log(email);
+        // debugger;
+        if(loginType==='buyer'){
+            
+            //fetch get buyer tables and verify if user exist
+            //if user exist, hide vendor div and show buyer div, hide login div as well
+            fetchData('http://localhost:3000/api/v1/buyers')
+                .then((buyers)=>{
+                    let accountFound=false;
+                    for(let buyer of buyers){
+                        if(buyer.username===username && buyer.email===email){
+                            $("#login").hide();
+                            $("#buyer-page").show();
+                            accountFound=true;
+                            loadBuyerScript();
+                            break;
+                        }
+                    }
+                    
+                    if(!accountFound){
+                            alert("Sorry, no account was found with that username and email! Please enter the correct credential.")
+                    }
+                    
+            })
+
+        }else{
+            //fetch get wholesale tables and verify if user exist
+            //if user exist, hide buyer div and show vendor div
+            fetchData('http://localhost:3000/api/v1/vendors')
+                .then((vendors)=>{
+                    let accountFound=false;
+                    for(vendor of vendors){
+                        if(vendor.username===username && vendor.email===email){
+                            $('div[name="main"]').attr('id', vendor.id);
+                            // console.log(vendor.id);
+                            $("#login").hide();
+                            $("#vendor").show();
+                            accountFound=true;
+                            loadVendorScript();
+                            break;
+                        }
+                    }
+
+                    if(!accountFound){
+                        alert("Sorry, no account was found with that username and email! Please enter the correct credential.")
+                }
+                
+                })
+        }
+    })
+
+
+    //form validation
+    $('.login-form').validate({ // initialize the plugin
+        rules: {
+            user: {
+                required: true,
+                minlength: 4
+            },
+            email: {
+                required: true,
+                email: true
+                
+            }
+        }
+    });
+
+    async function fetchData (url) {
+        try {
+          const resp = await fetch(url)
+          return resp.json();
+        } catch (err) {
+             alert(err);
+          }
+     }
+  
+
+/////login Js script -------ends here ----------
+
+
+
+
+////Buyers Js script -------- start here ---------
+
+function loadBuyerScript(){
+    //from buyers page
+    // const ulBuyerSelector = document.getElementById("buyer-selection");
+    // ulBuyerSelector.addEventListener('click', processSelection);
+    const divDisplaySelection = document.getElementById("option-selected");
+
+
+    fetchData(baseUrl+'products')
+        .then((products)=>showAllProducts(products));
+
+
+// function processSelection(e){
+    $("#buyer-selection").click(function(e){
+        
+    if (e.target.innerText==="Barcode"){
+
+        const inputBarcode=e.target.nextElementSibling
+        $(inputBarcode).toggle('slow', ()=>{
+            // let e = $.Event('keyup');
+            // e.which = 8; // Character 'backspace'
+            // // debugger;
+            // if($(inputBarcode).is(':hidden')){
+            //     while(inputBarcode.value!==''){
+
+            //         $(inputBarcode).trigger(e);
+            //     }
+            // }
+
+            inputBarcode.value='';
+            inputBarcode.addEventListener('keyup', searchByBarcode)
+        });
+        // inputBarcode.style.display="inline";
+
+    }else if (e.target.innerText==="Name"){
+        const inputName=e.target.nextElementSibling
+        // inputName.style.display="inline";
+        $(inputName).toggle(800);
+        inputName.addEventListener('keyup', searchByName)
+    }else if (e.target.innerText==="Vendor"){
+        if (e.target.nextElementSibling){
+            e.target.nextElementSibling.remove();
+        }else{
+            fetchVendors(e.target);
+        }
+    }else if (e.target.innerText==="Category"){
+        if (e.target.nextElementSibling){
+            e.target.nextElementSibling.remove();
+        }else{
+            fetchCategory(e.target);
+        }
+    }
+})
+
+
+
+function fetchVendors(ele){ //ele is current target element. It is passed when clicked on search by vendor and it will be passed to createVendorSelectBox 
+                            //function so that the select box can be appended into it.
+    fetch('http://localhost:3000/api/v1/vendors')
+        .then(res => res.json())
+        .then(vendors => createVendorSelectBox(vendors, ele));
+ 
+}
+
+
+function createVendorSelectBox(vendors, ele){
+    const vendorSelBox=document.createElement('select');
+    for(let vendor of vendors){
+        const option=document.createElement('option');
+        option.value = vendor.name;
+        option.innerText = vendor.name;
+        vendorSelBox.append(option);
+    }
+    ele.parentNode.append(vendorSelBox);
+    // ele.style.display='inline';
+    $(ele).fadeIn('slow');
+    vendorSelBox.addEventListener('change', searchByVendor)
+}
+
+function fetchCategory(ele){
+    fetch('http://localhost:3000/api/v1/categories')
+        .then(res => res.json())
+        .then(cats => createCategorySelectBox(cats, ele));
+ 
+}
+
+function createCategorySelectBox(cats, ele){
+    const categorySelBox=document.createElement('select');
+    for(let cat of cats){
+        const option=document.createElement('option');
+        option.value = cat.main_cat;
+        option.innerText = cat.main_cat;
+        categorySelBox.append(option);
+    }
+    ele.parentNode.append(categorySelBox);
+    // ele.style.display='inline';
+    $(ele).fadeIn();
+    categorySelBox.addEventListener('change', searchByCategory);
+}
+
+
+function showAllProducts(products){
+    
+    const divProduct = createTag('div');
+    divProduct.setAttribute('class', 'all-products')
+    for(let product of products){
+        const divCard = createTag('div');
+        divCard.setAttribute('class', 'product');
+        const divProductDetail = createTag('div')
+        divProductDetail.setAttribute('class', 'product-detail-div')
+        divProductDetail.style.display="inline-block";
+        let divVendors;
+        const ul=createTag('ul')
+        for(let key in product){
+            if(key !== 'id' && key !=='img_url' && key!=='vendor_products'){
+                let li = document.createElement('li');
+                li.innerHTML=`<p><strong>${key}</strong>: <span class=${key}> ${product[key]}</span></p>`
+                ul.append(li);
+            }
+            if (key === 'vendor_products'){
+                divVendors=showVendorDetail(product[key]);
+                divVendors.style.display="inline-block";
+
+            }
+
+         
+        }
+        divProductDetail.append(ul);
+        
+        const divImg = createTag('div');
+        divImg.setAttribute('class', 'image-div')
+        divImg.style.display="inline-block";
+        divImg.innerHTML=`<img src=${product.img_url} width="140px" height="180px";>`
+        divCard.append(divImg);
+        divCard.append(divProductDetail);
+        divCard.append(divVendors);
+        divProduct.appendChild(divCard);
+    }
+    divDisplaySelection.innerHTML="";
+    divDisplaySelection.append(divProduct);
+    divDisplaySelection.style.display = "block";
+    
+    //store fresh array of dom elements for search function
+        // spanCats=document.querySelectorAll('.category_type');   
+        // console.log(spanCats); 
+
+}
+
+
+function showVendorDetail(vendorDetail){
+    const div = createTag('div');
+    div.setAttribute('class', 'vendor-list-div')
+    for(let vendor of vendorDetail){
+        const ul=document.createElement('ul');
+        // debugger;
+        ul.setAttribute('name', vendor.vendor_name)
+        ul.setAttribute('class', 'vendor')
+        
+        ul.style.display="inline-block";
+        for(let key in vendor){
+            if(key !=='id' && key!=='vendor_id'){
+                let li=document.createElement('li');
+                li.innerHTML=`<p><strong>${key}</strong>:  ${vendor[key]}</p>`
+                ul.append(li);
+            }
+        }
+        const orderButton=document.createElement('button');
+        orderButton.innerText="Order";
+        ul.append(orderButton);
+        div.append(ul);
+    }
+    // console.log(div.hasChildNodes());
+    return div;
+}
+
+
+//Search functions--------------Search By Barcode
+function searchByBarcode(e){
+    let searchBarcode=e.target.value;
+    let spanBarcodes=document.querySelectorAll(".barcode");
+    spanBarcodes.forEach(function(spanBar){
+        // debugger;
+        let parentDiv=spanBar.parentNode.parentNode.parentNode.parentNode.parentNode;
+        if(spanBar.innerText.trim().startsWith(searchBarcode)){
+            parentDiv.style.display='block';
+        }else{
+            parentDiv.style.display='none';
+        }
+    })
+}
+
+
+///Search By Name-------------
+function searchByName(e){
+    let searchName=e.target.value;
+    let spanNames=document.querySelectorAll(".name");
+    spanNames.forEach(function(spanName){
+        let parentDiv=spanName.parentNode.parentNode.parentNode.parentNode.parentNode;
+        if(spanName.innerText.toLowerCase().includes(searchName.toLowerCase())){
+            parentDiv.style.display='block';
+            
+        }else{
+            parentDiv.style.display='none';
+        }
+    })
+}
+
+
+///Search By Vendor
+
+function searchByVendor(e){
+    let vendor=e.target.value;
+    // const ulVendors=document.querySelectorAll('.vendor');
+    const ulVendors=document.querySelectorAll(`[name="${true}"]`);
+    console.log(ulVendors);
+    ulVendors.forEach(function(ulVendor){
+        let parentDiv=ulVendor.parentNode.parentNode
+        if(ulVendor.getAttribute('name')===vendor){
+            console.log(ulVendor.name);
+            console.log(vendor);
+            parentDiv.style.display='block';
+            // console.log(parentDiv);
+        }else{
+            console.log(ulVendor.name);
+            console.log(vendor);
+            parentDiv.style.display='none';
+        }
+
+    })
+}
+
+//Search By Category
+
+function searchByCategory(e){
+    let cat=e.target.value;
+    const spanCats=document.querySelectorAll('.category_type');
+    spanCats.forEach(function(spanCat){
+        let parentDiv=spanCat.parentNode.parentNode.parentNode.parentNode.parentNode;
+        parentDiv.style.display='block';
+        if(spanCat.innerText===cat){
+            parentDiv.style.display='block';
+        }else{
+            
+            parentDiv.style.display='none';
+        }
+
+    })
+}
+}
+
+////Buyers Js script --------- ends here --------
+
+
+
+
+
+//////Vendors Js script --------- start here -------
+
+function loadVendorScript(){
+//from vendors page
+const divMain=document.getElementsByName('main')[0];
+console.log(divMain);
 const divVendorInfo = document.getElementById('vendor-info');
 const divProductDetail=document.getElementById('all-product');
 const tableProduct=document.getElementById('product-table');
@@ -15,10 +391,12 @@ buttonAddNewBtn.addEventListener('click', addNewItem);
 //Base URL for api
 const baseUrl=`http://localhost:3000/api/v1/`;
 
-let vendorId=1;//hardcoded id for testing, set this id to vendor id once vendor logs in
+let vendorId=divMain.id;//hardcoded id for testing, set this id to vendor id once vendor logs in
+console.log(vendorId);
 
 fetchVendorItems(vendorId);
-// fetchAllProducts();
+
+
 
 function fetchVendorItems(id){
     fetch(`http://localhost:3000/api/v1/vendors/${vendorId}`)
@@ -28,15 +406,14 @@ function fetchVendorItems(id){
 
 
 function showAllVendorItems(vendorDetails){
-    divVendorInfo.innerHTML=`<div class="block" style="display:inline-block"><p>Name: ${vendorDetails.name}</p>`+
-                            `<p>Username: ${vendorDetails.username}`+
-                            `<p>Email: ${vendorDetails.email}`+
-                            `<p>Minimum set? : ${vendorDetails.has_min}`+
-                            `<p>Minimum Amount: ${vendorDetails.min_amount}`+
+    divVendorInfo.innerHTML=`<div class="block" style="display:inline-block"><p><strong>Name</strong>: ${vendorDetails.name}</p>`+
+                            `<p><strong>Username</strong>: ${vendorDetails.username}`+
+                            `<p><strong>Email</strong>: ${vendorDetails.email}`+
+                            `<p><strong>Minimum set?</strong>: ${vendorDetails.has_min}`+
+                            `<p><strong>Minimum Amount</strong>: ${vendorDetails.min_amount}`+
                             `</div>`
 
 
-    //test code begin 'test1'
         for(let product of vendorDetails.products){
             
         let id = product.product_id
@@ -44,57 +421,6 @@ function showAllVendorItems(vendorDetails){
             .then(res=>res.json())
             .then(productInfo=>populateTable(productInfo, product))
         }
-
-        
-        
-    //test code end
-
-
-        //working code begin
-    // for(let product of vendorDetails.products){
-    //     let row = tableProduct.insertRow();
-    //     let cellImage = row.insertCell();
-    //     let cellName = row.insertCell();
-    //     // cellName.setAttribute('name', product.name)
-    //     let cellSize = row.insertCell();
-    //     let cellBarcode = row.insertCell();
-    //     let cellBrand = row.insertCell();
-    //     let cellCategory = row.insertCell();
-    //     let cellAction=row.insertCell();
-        
-    //     cellImage.innerHTML = `<img src=${product.img_url} class="table-img">`
-    //     cellName.innerText = product.name;
-    //     cellSize.innerText = product.size;
-    //     cellBarcode.innerText = product.barcode;
-    //     cellBrand.innerText = product.brand;
-    //     cellCategory.innerText = product.category_id;
-
-    //     let editButton=document.createElement('button');
-    //     editButton.setAttribute('class', 'item-action')
-    //     editButton.innerText="Edit";
-    //     // editButton.addEventListener('click', editItem);
-
-    //     let deleteBtn=document.createElement('button');
-    //     deleteBtn.setAttribute('class', 'item-action')
-    //     deleteBtn.innerText="Delete";
-    //     // deleteBtn.addEventListener('click', deleteItem);
-
-    //     cellAction.append(editButton);
-    //     cellAction.append(deleteBtn);
-    //working code end
-
-
-        
-        // for(let extraInfo of vendorDetails.vendor_products){
-        //     let cellVitem = row.insertCell();
-        //     cellVitem.innerText = extraInfo.v_item;
-
-        //     let cellPrice = row.insertCell();
-        //     cellPrice.innerText = extraInfo.case_price;
-        // }
-
-    //   }
-    
 }
 
 //test code function called by test1
@@ -174,11 +500,6 @@ function showAllVendorItems(vendorDetails){
     // }
 }
 
-//test code function test1 end
-
-
-
-
 
 function tableAction(eventDblClk){
     console.log(eventDblClk.target);
@@ -197,7 +518,7 @@ function tableAction(eventDblClk){
             targetEle.innerText=editCell.value;
             editCell.remove();
 
-            fetch(`http://localhost:3000/`)
+            // fetch(`http://localhost:3000/`)
         }
     })
 
@@ -380,9 +701,6 @@ function requiredFields(){//need to implement this functionality, check if the f
     return false;
 }
 
-function createTag(tagName){
-    return document.createElement(tagName);
-}
 
 function getEditBox(){
     let inputPrice=createTag('input');
@@ -415,12 +733,7 @@ function highlightItemNumAndPrice(e){
 
     e.target.style.display='none';//hide the edit button and display update button
     e.target.nextElementSibling.nextElementSibling.style.display="inline"; //display update P&I button
-    // console.log(e.target.nextElementSibling);
-    // console.log(e.target);
-    // debugger;
-    // if(e.target.innerText==='Update'){
-    //     updatePriceAndItemNum(e,price,editPrice, vItem, inputItemNum);
-    // }
+    
 
 }
 
@@ -465,19 +778,7 @@ async function getAllProducts () {
          console.log(err)
       }
  }
-// function fetchAllProducts(){
-//       return  getAllProducts=(data)=>fetch(baseUrl+'products')
-//         .then(res=>res.json())
-//         .then(allProducts=>allProducts)
 
-//         // return data;
-// }
-
-// function getAllProducts(allProducts){
-//     console.log(allProducts);
-//     return allProducts;
-// }
-//separate function to get all products---end
 
 
 function lookupProductForBarcode(e,allProducts){
@@ -560,7 +861,7 @@ function populateRow(){
 }
 
 
-function requiredFields(){
+function fieldsRequired(){
     let attrs=["name", "size", "barcode", "case_price"];
     return attrs;
 }
@@ -579,7 +880,7 @@ function addNewProduct(e){
 
     //check if the required fields are empty
     for(let cell of rowCells){
-        if(requiredFields().includes(cell.firstChild.name) && cell.firstChild.value===''){
+        if(fieldsRequired().includes(cell.firstChild.name) && cell.firstChild.value===''){
             cell.firstChild.style.backgroundColor="#ff8080";
             errorMsg.style.display='block';
             requiredCellsEmpty=true;
@@ -595,13 +896,20 @@ function addNewProduct(e){
     }
 
     if(!requiredCellsEmpty){
+        // debugger;
 
         //if add button's dataset item value is 'exist' do fetch post to vp table
         if(e.target.dataset.item==='exist'){
 
             //set td innerText to the values of input boxes and remove the inputboxes
             for(let cell of rowCells){
+                
+                console.log(cell);
+                if(cell.firstChild.name==='img_url'){
+                    cell.innerHTML=`<img src=${cell.firstChild.value}`;
+                }else{
                 cell.innerText=cell.firstChild.value;
+                }
                 // cell.firstChild.remove();
             }
 
@@ -679,7 +987,8 @@ function addNewProduct(e){
                   
                 // function postVp(justAddedProd){
                 console.log(data.length);
-                vpObj.product_id=data.length+1;
+                vpObj.product_id=data.length+1; //this will assign the next number after the length of all products but this does not work if 'delete' function
+                                                // is implemented
                 vpObj.vendor_id=vendorId;
                 console.log(vpObj);
                 //POST vendor_products table
@@ -696,3 +1005,9 @@ function addNewProduct(e){
 
     }
 }
+
+}
+
+///////Vendor Js script ------- ends here ------------
+
+});

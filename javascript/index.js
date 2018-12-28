@@ -7,7 +7,8 @@ const divDisplaySelection = document.getElementById("option-selected");
 fetchAllProducts();
 
 function processSelection(e){
-    // console.log(e.target);
+    debugger;
+    console.log(e.target);
     if (e.target.innerText==="Barcode"){
         
         const inputBarcode=e.target.nextElementSibling
@@ -237,27 +238,3 @@ function searchByCategory(e){
 
 
 
-
-
-// function imgCard(img_url){
-
-//     const card = 
-//         `<img class="card-img-top" src="${img_url}" alt="Card image cap">`+
-//         '<div class="card-body">'+
-//         '<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card content.</p>'+
-//         '</div>'
-//     return card;
-// }
-
-// function imgCard1(img_url){
-//    const card = 
-//         `<img class="card-img-top" src="${img_url}" alt="Card image cap">`+
-//         `<div class="card-body">`+
-//         `<h5 class="card-title">Card title</h5>`+
-//         `<p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>`+
-//         `</div>`+
-//         `<div class="card-footer">`+
-//         `<small class="text-muted">Last updated 3 mins ago</small>`+
-//         `</div>`
-//     return card;
-// }

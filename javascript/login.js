@@ -21,10 +21,32 @@ $(function(){
 
     $(".login-form").submit(function(){
         event.preventDefault();
+        let username=this.user.value;
+        let email=this.email.value;
+        console.log(username);
+        console.log(email);
+        // debugger;
         if(loginType==='buyer'){
+            
             //fetch get buyer tables and verify if user exist
             //if user exist, hide vendor div and show buyer div, hide login div as well
-            
+            fetchData('http://localhost:3000/api/v1/buyers')
+                .then((buyers)=>{
+                    let accountFound=false;
+                    for(let buyer of buyers){
+                        if(buyer.username===username && buyer.email===email){
+                            $("#login").hide();
+                            $("#buyer-page").show();
+                            accountFound=true;
+                            break;
+                        }
+                    }
+                    
+                    if(!accountFound){
+                            alert("Sorry, no account was found with that username and email! Please enter the correct credential.")
+                    }
+                    
+            })
 
         }else{
             //fetch get wholesale tables and verify if user exist
@@ -38,13 +60,23 @@ $(function(){
         rules: {
             user: {
                 required: true,
-                email: true
-            },
-            pass: {
-                required: true,
                 minlength: 4
+            },
+            email: {
+                required: true,
+                email: true
+                
             }
         }
     });
+
+    async function fetchData (url) {
+        try {
+          const resp = await fetch(url)
+          return resp.json();
+        } catch (err) {
+             alert(err);
+          }
+     }
   
 });

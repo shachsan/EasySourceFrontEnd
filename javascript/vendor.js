@@ -1,4 +1,4 @@
-const buyerPage = document.getElementById('wrapper');
+const buyerPage = document.getElementById('buyer-page');
 buyerPage.style.display='none';
 const divMain=document.getElementById('main');
 const divVendorInfo = document.getElementById('vendor-info');

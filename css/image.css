@@ -1,12 +1,16 @@
 
 
-#wrapper{
+#buyer-page{
     display: none;
 } 
 
 #vendor{
-    display: none;
+    display: display;
 }  
+
+#login{
+    display: none;
+}
 
 #product-table{
 

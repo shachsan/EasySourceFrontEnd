@@ -21,7 +21,7 @@ $(function(){
     })
 
     $("#whlsr").click(function(){
-        loginType="vendor"
+        loginType="vendor";
         $("#login-type").fadeOut();
         $(".container").fadeIn();
     
@@ -29,11 +29,14 @@ $(function(){
 
     $(".login-form").submit(function(){
         event.preventDefault();
+        
         let username=this.user.value;
         let email=this.email.value;
-        console.log(username);
-        console.log(email);
-        // debugger;
+
+        if(username==='' || email===''){
+            return;
+        }
+        
         if(loginType==='buyer'){
             
             //fetch get buyer tables and verify if user exist
@@ -586,9 +589,10 @@ function highlightEditableCells(e){
     currentTrChilds.forEach((td,i) => {
         // console.log(i);
         if(i!==8 && i!==0){
-           let editCell=document.createElement('input');
+           let editCell=createTag('input');
             editCell.value=td.innerText
             editCell.setAttribute('type', 'text');
+            editCell.setAttribute('class','edit-cell')
             editCell.setAttribute('onfocus','this.select()')
             editCell.autofocus='true';
 

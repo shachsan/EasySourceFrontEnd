@@ -127,6 +127,10 @@ table {
       text-align: center;
   }
 
+  .edit-cell{
+      background: #ffe5cc;
+  }
+
   /* .input-cell:focus {
       background: transparent;
   } */

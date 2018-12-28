@@ -2,6 +2,10 @@ $(function(){
 
     
     let loginType; 
+    let baseUrl='http://localhost:3000/api/v1/';
+    function createTag(tagName){
+        return document.createElement(tagName);
+    }
 
     /////login Js script -------start here ----------
     $("#login-button").click(function(){
@@ -114,25 +118,41 @@ $(function(){
 
 function loadBuyerScript(){
     //from buyers page
-    const ulBuyerSelector = document.getElementById("buyer-selection");
-    ulBuyerSelector.addEventListener('click', processSelection);
+    // const ulBuyerSelector = document.getElementById("buyer-selection");
+    // ulBuyerSelector.addEventListener('click', processSelection);
     const divDisplaySelection = document.getElementById("option-selected");
 
-    fetchAllProducts();//fetch products global
+
+    fetchData(baseUrl+'products')
+        .then((products)=>showAllProducts(products));
 
 
-function processSelection(e){
-    debugger;
-    console.log(e.target);
-    if (e.target.innerText==="Barcode"){
+// function processSelection(e){
+    $("#buyer-selection").click(function(e){
         
+    if (e.target.innerText==="Barcode"){
+
         const inputBarcode=e.target.nextElementSibling
-        // inputBarcode.addEventListener("toggle");
-        inputBarcode.style.display="inline";
-        inputBarcode.addEventListener('keyup', searchByBarcode)
+        $(inputBarcode).toggle('slow', ()=>{
+            // let e = $.Event('keyup');
+            // e.which = 8; // Character 'backspace'
+            // // debugger;
+            // if($(inputBarcode).is(':hidden')){
+            //     while(inputBarcode.value!==''){
+
+            //         $(inputBarcode).trigger(e);
+            //     }
+            // }
+
+            inputBarcode.value='';
+            inputBarcode.addEventListener('keyup', searchByBarcode)
+        });
+        // inputBarcode.style.display="inline";
+
     }else if (e.target.innerText==="Name"){
         const inputName=e.target.nextElementSibling
-        inputName.style.display="inline";
+        // inputName.style.display="inline";
+        $(inputName).toggle(800);
         inputName.addEventListener('keyup', searchByName)
     }else if (e.target.innerText==="Vendor"){
         if (e.target.nextElementSibling){
@@ -147,23 +167,8 @@ function processSelection(e){
             fetchCategory(e.target);
         }
     }
-}
+})
 
-
-function barcodeInputForm(){
-    const bar="<form><lable for>Enter Barcode:</label><input type='text'></input>"+
-    "<button>Go</button></form>"
-    divDisplaySelection.innerHTML="";
-    divDisplaySelection.innerHTML=bar;
-}
-
-
-function nameInputForm(){
-    const nameForm="<form><lable for>Enter Product Name:</label><input type='text'></input>"+
-    "<button>Go</button></form>"
-    divDisplaySelection.innerHTML="";
-    divDisplaySelection.innerHTML=nameForm;
-}
 
 
 function fetchVendors(ele){ //ele is current target element. It is passed when clicked on search by vendor and it will be passed to createVendorSelectBox 
@@ -184,7 +189,8 @@ function createVendorSelectBox(vendors, ele){
         vendorSelBox.append(option);
     }
     ele.parentNode.append(vendorSelBox);
-    ele.style.display='inline';
+    // ele.style.display='inline';
+    $(ele).fadeIn('slow');
     vendorSelBox.addEventListener('change', searchByVendor)
 }
 
@@ -204,31 +210,28 @@ function createCategorySelectBox(cats, ele){
         categorySelBox.append(option);
     }
     ele.parentNode.append(categorySelBox);
-    ele.style.display='inline';
+    // ele.style.display='inline';
+    $(ele).fadeIn();
     categorySelBox.addEventListener('change', searchByCategory);
 }
 
-function fetchAllProducts(){
-    fetch('http://localhost:3000/api/v1/products')
-        .then(res => res.json())
-        .then(products => showAllProducts(products))
-}
 
 function showAllProducts(products){
     
-    const divProduct = document.createElement('div');
+    const divProduct = createTag('div');
     divProduct.setAttribute('class', 'all-products')
     for(let product of products){
-        const divCard = document.createElement('div');
+        const divCard = createTag('div');
         divCard.setAttribute('class', 'product');
-        const divProductDetail = document.createElement('div')
+        const divProductDetail = createTag('div')
+        divProductDetail.setAttribute('class', 'product-detail-div')
         divProductDetail.style.display="inline-block";
         let divVendors;
-        const ul=document.createElement('ul')
+        const ul=createTag('ul')
         for(let key in product){
             if(key !== 'id' && key !=='img_url' && key!=='vendor_products'){
                 let li = document.createElement('li');
-                li.innerHTML=`<p>${key}: <span class=${key}> ${product[key]}</span></p>`
+                li.innerHTML=`<p><strong>${key}</strong>: <span class=${key}> ${product[key]}</span></p>`
                 ul.append(li);
             }
             if (key === 'vendor_products'){
@@ -241,9 +244,10 @@ function showAllProducts(products){
         }
         divProductDetail.append(ul);
         
-        const divImg = document.createElement('div');
+        const divImg = createTag('div');
+        divImg.setAttribute('class', 'image-div')
         divImg.style.display="inline-block";
-        divImg.innerHTML=`<img src=${product.img_url} class="img-thumbnail" width="200px" height="180px">`
+        divImg.innerHTML=`<img src=${product.img_url} width="140px" height="180px";>`
         divCard.append(divImg);
         divCard.append(divProductDetail);
         divCard.append(divVendors);
@@ -261,9 +265,11 @@ function showAllProducts(products){
 
 
 function showVendorDetail(vendorDetail){
-    const div = document.createElement('div');
+    const div = createTag('div');
+    div.setAttribute('class', 'vendor-list-div')
     for(let vendor of vendorDetail){
         const ul=document.createElement('ul');
+        // debugger;
         ul.setAttribute('name', vendor.vendor_name)
         ul.setAttribute('class', 'vendor')
         
@@ -271,7 +277,7 @@ function showVendorDetail(vendorDetail){
         for(let key in vendor){
             if(key !=='id' && key!=='vendor_id'){
                 let li=document.createElement('li');
-                li.innerHTML=`<p>${key}:  ${vendor[key]}</p>`
+                li.innerHTML=`<p><strong>${key}</strong>:  ${vendor[key]}</p>`
                 ul.append(li);
             }
         }
@@ -280,6 +286,7 @@ function showVendorDetail(vendorDetail){
         ul.append(orderButton);
         div.append(ul);
     }
+    // console.log(div.hasChildNodes());
     return div;
 }
 
@@ -289,8 +296,9 @@ function searchByBarcode(e){
     let searchBarcode=e.target.value;
     let spanBarcodes=document.querySelectorAll(".barcode");
     spanBarcodes.forEach(function(spanBar){
+        // debugger;
         let parentDiv=spanBar.parentNode.parentNode.parentNode.parentNode.parentNode;
-        if(spanBar.innerText.startsWith(searchBarcode)){
+        if(spanBar.innerText.trim().startsWith(searchBarcode)){
             parentDiv.style.display='block';
         }else{
             parentDiv.style.display='none';
@@ -319,14 +327,19 @@ function searchByName(e){
 
 function searchByVendor(e){
     let vendor=e.target.value;
-    const ulVendors=document.querySelectorAll('.vendor');
+    // const ulVendors=document.querySelectorAll('.vendor');
+    const ulVendors=document.querySelectorAll(`[name="${true}"]`);
     console.log(ulVendors);
     ulVendors.forEach(function(ulVendor){
         let parentDiv=ulVendor.parentNode.parentNode
         if(ulVendor.getAttribute('name')===vendor){
-            
+            console.log(ulVendor.name);
+            console.log(vendor);
             parentDiv.style.display='block';
+            // console.log(parentDiv);
         }else{
+            console.log(ulVendor.name);
+            console.log(vendor);
             parentDiv.style.display='none';
         }
 
@@ -393,15 +406,14 @@ function fetchVendorItems(id){
 
 
 function showAllVendorItems(vendorDetails){
-    divVendorInfo.innerHTML=`<div class="block" style="display:inline-block"><p>Name: ${vendorDetails.name}</p>`+
-                            `<p>Username: ${vendorDetails.username}`+
-                            `<p>Email: ${vendorDetails.email}`+
-                            `<p>Minimum set? : ${vendorDetails.has_min}`+
-                            `<p>Minimum Amount: ${vendorDetails.min_amount}`+
+    divVendorInfo.innerHTML=`<div class="block" style="display:inline-block"><p><strong>Name</strong>: ${vendorDetails.name}</p>`+
+                            `<p><strong>Username</strong>: ${vendorDetails.username}`+
+                            `<p><strong>Email</strong>: ${vendorDetails.email}`+
+                            `<p><strong>Minimum set?</strong>: ${vendorDetails.has_min}`+
+                            `<p><strong>Minimum Amount</strong>: ${vendorDetails.min_amount}`+
                             `</div>`
 
 
-    //test code begin 'test1'
         for(let product of vendorDetails.products){
             
         let id = product.product_id
@@ -409,57 +421,6 @@ function showAllVendorItems(vendorDetails){
             .then(res=>res.json())
             .then(productInfo=>populateTable(productInfo, product))
         }
-
-        
-        
-    //test code end
-
-
-        //working code begin
-    // for(let product of vendorDetails.products){
-    //     let row = tableProduct.insertRow();
-    //     let cellImage = row.insertCell();
-    //     let cellName = row.insertCell();
-    //     // cellName.setAttribute('name', product.name)
-    //     let cellSize = row.insertCell();
-    //     let cellBarcode = row.insertCell();
-    //     let cellBrand = row.insertCell();
-    //     let cellCategory = row.insertCell();
-    //     let cellAction=row.insertCell();
-        
-    //     cellImage.innerHTML = `<img src=${product.img_url} class="table-img">`
-    //     cellName.innerText = product.name;
-    //     cellSize.innerText = product.size;
-    //     cellBarcode.innerText = product.barcode;
-    //     cellBrand.innerText = product.brand;
-    //     cellCategory.innerText = product.category_id;
-
-    //     let editButton=document.createElement('button');
-    //     editButton.setAttribute('class', 'item-action')
-    //     editButton.innerText="Edit";
-    //     // editButton.addEventListener('click', editItem);
-
-    //     let deleteBtn=document.createElement('button');
-    //     deleteBtn.setAttribute('class', 'item-action')
-    //     deleteBtn.innerText="Delete";
-    //     // deleteBtn.addEventListener('click', deleteItem);
-
-    //     cellAction.append(editButton);
-    //     cellAction.append(deleteBtn);
-    //working code end
-
-
-        
-        // for(let extraInfo of vendorDetails.vendor_products){
-        //     let cellVitem = row.insertCell();
-        //     cellVitem.innerText = extraInfo.v_item;
-
-        //     let cellPrice = row.insertCell();
-        //     cellPrice.innerText = extraInfo.case_price;
-        // }
-
-    //   }
-    
 }
 
 //test code function called by test1
@@ -540,11 +501,6 @@ function showAllVendorItems(vendorDetails){
 }
 
 
-
-
-
-
-
 function tableAction(eventDblClk){
     console.log(eventDblClk.target);
     let targetEle=eventDblClk.target;
@@ -562,7 +518,7 @@ function tableAction(eventDblClk){
             targetEle.innerText=editCell.value;
             editCell.remove();
 
-            fetch(`http://localhost:3000/`)
+            // fetch(`http://localhost:3000/`)
         }
     })
 
@@ -745,9 +701,6 @@ function requiredFields(){//need to implement this functionality, check if the f
     return false;
 }
 
-function createTag(tagName){
-    return document.createElement(tagName);
-}
 
 function getEditBox(){
     let inputPrice=createTag('input');
@@ -908,7 +861,7 @@ function populateRow(){
 }
 
 
-function requiredFields(){
+function fieldsRequired(){
     let attrs=["name", "size", "barcode", "case_price"];
     return attrs;
 }
@@ -927,7 +880,7 @@ function addNewProduct(e){
 
     //check if the required fields are empty
     for(let cell of rowCells){
-        if(requiredFields().includes(cell.firstChild.name) && cell.firstChild.value===''){
+        if(fieldsRequired().includes(cell.firstChild.name) && cell.firstChild.value===''){
             cell.firstChild.style.backgroundColor="#ff8080";
             errorMsg.style.display='block';
             requiredCellsEmpty=true;
@@ -943,13 +896,20 @@ function addNewProduct(e){
     }
 
     if(!requiredCellsEmpty){
+        // debugger;
 
         //if add button's dataset item value is 'exist' do fetch post to vp table
         if(e.target.dataset.item==='exist'){
 
             //set td innerText to the values of input boxes and remove the inputboxes
             for(let cell of rowCells){
+                
+                console.log(cell);
+                if(cell.firstChild.name==='img_url'){
+                    cell.innerHTML=`<img src=${cell.firstChild.value}`;
+                }else{
                 cell.innerText=cell.firstChild.value;
+                }
                 // cell.firstChild.remove();
             }
 
@@ -1027,7 +987,8 @@ function addNewProduct(e){
                   
                 // function postVp(justAddedProd){
                 console.log(data.length);
-                vpObj.product_id=data.length+1;
+                vpObj.product_id=data.length+1; //this will assign the next number after the length of all products but this does not work if 'delete' function
+                                                // is implemented
                 vpObj.vendor_id=vendorId;
                 console.log(vpObj);
                 //POST vendor_products table

@@ -12,8 +12,35 @@
     display: block;
 }
 
-#product-table{
+.heading{
+    background-image: linear-gradient(-90deg, #ff6666, orange);
+    padding: 10px;
+}
 
+.vendor{
+    
+    border-left-style: ridge;
+    list-style: none;
+    padding-right: 5px;
+}
+
+
+.align-text{
+
+}
+
+/* css for each product container div */
+.product{
+
+    margin: 5px;
+    border: 1px solid orange;
+}
+
+
+
+.product, .image-div, .vendor-list-div, .product-detail-div{ 
+    vertical-align: top;
+    padding: 5px;
 }
 
 #all-product{

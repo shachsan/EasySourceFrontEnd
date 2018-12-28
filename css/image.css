@@ -5,11 +5,11 @@
 } 
 
 #vendor{
-    display: display;
+    display: none;
 }  
 
 #login{
-    display: none;
+    display: block;
 }
 
 #product-table{

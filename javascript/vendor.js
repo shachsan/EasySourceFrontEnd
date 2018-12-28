@@ -1,6 +1,7 @@
-const buyerPage = document.getElementById('buyer-page');
-buyerPage.style.display='none';
-const divMain=document.getElementById('main');
+// const buyerPage = document.getElementById('buyer-page');
+// buyerPage.style.display='none';
+const divMain=document.getElementsByName('main')[0];
+console.log(divMain);
 const divVendorInfo = document.getElementById('vendor-info');
 const divProductDetail=document.getElementById('all-product');
 const tableProduct=document.getElementById('product-table');
@@ -15,7 +16,8 @@ buttonAddNewBtn.addEventListener('click', addNewItem);
 //Base URL for api
 const baseUrl=`http://localhost:3000/api/v1/`;
 
-let vendorId=1;//hardcoded id for testing, set this id to vendor id once vendor logs in
+let vendorId=divMain.id;//hardcoded id for testing, set this id to vendor id once vendor logs in
+console.log(vendorId);
 
 fetchVendorItems(vendorId);
 // fetchAllProducts();

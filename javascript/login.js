@@ -51,6 +51,25 @@ $(function(){
         }else{
             //fetch get wholesale tables and verify if user exist
             //if user exist, hide buyer div and show vendor div
+            fetchData('http://localhost:3000/api/v1/vendors')
+                .then((vendors)=>{
+                    let accountFound=false;
+                    for(vendor of vendors){
+                        if(vendor.username===username && vendor.email===email){
+                            $('div[name="main"]').attr('id', vendor.id);
+                            // console.log(vendor.id);
+                            $("#login").hide();
+                            $("#vendor").show();
+                            accountFound=true;
+                            break;
+                        }
+                    }
+
+                    if(!accountFound){
+                        alert("Sorry, no account was found with that username and email! Please enter the correct credential.")
+                }
+                
+                })
         }
     })
 

@@ -1,11 +1,11 @@
 
 
 #wrapper{
-    display: none;
+    display: block;
 } 
 
 #vendor{
-    display: block;
+    display: none;
 }  
 
 #product-table{

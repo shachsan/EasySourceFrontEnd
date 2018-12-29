@@ -468,8 +468,8 @@ function showAllVendorItems(vendorDetails){
         
         let cellAction=row.insertCell();
         
-        let editButton=document.createElement('button');
-        editButton.setAttribute('class', 'item-action')
+        let editButton=createTag('button');
+        editButton.setAttribute('class', 'item-action btn btn-primary');
         editButton.innerText="Edit";
         // editButton.addEventListener('click', editItem);
 
@@ -489,7 +489,7 @@ function showAllVendorItems(vendorDetails){
         updtBtnPriceNitem.style.display='none';
 
         let deleteBtn=document.createElement('button');
-        deleteBtn.setAttribute('class', 'item-action')
+        deleteBtn.setAttribute('class', 'item-action btn btn-danger');
         deleteBtn.innerText="Delete";
         // deleteBtn.addEventListener('click', deleteItem);
 
@@ -507,8 +507,9 @@ function showAllVendorItems(vendorDetails){
 function tableAction(eventDblClk){
     console.log(eventDblClk.target);
     let targetEle=eventDblClk.target;
-    let editCell=document.createElement('input');
+    let editCell=createTag('input');
     editCell.value=eventDblClk.target.innerText;
+    editCell.setAttribute('class','edit-cell');
     editCell.setAttribute('type', 'text');
     editCell.setAttribute('onfocus','this.select()')
     editCell.autofocus='true';
@@ -592,7 +593,7 @@ function highlightEditableCells(e){
            let editCell=createTag('input');
             editCell.value=td.innerText
             editCell.setAttribute('type', 'text');
-            editCell.setAttribute('class','edit-cell')
+            editCell.setAttribute('class','edit-cell');
             editCell.setAttribute('onfocus','this.select()')
             editCell.autofocus='true';
 
@@ -722,7 +723,8 @@ function highlightItemNumAndPrice(e){
     let price=e.target.parentNode.previousElementSibling;
     // debugger;
     let editPrice=getEditBox();
-    editPrice.setAttribute('name','editPrice')
+    editPrice.setAttribute('name','editPrice');
+    editPrice.setAttribute('class','edit-cell')
     editPrice.value=price.innerText;
     // console.log(editPrice.value);
     price.innerText="";
@@ -731,6 +733,7 @@ function highlightItemNumAndPrice(e){
     let vItem=price.previousElementSibling;
     let inputItemNum=getEditBox();
     inputItemNum.setAttribute('name','editItem')
+    inputItemNum.setAttribute('class','edit-cell')
     inputItemNum.value=vItem.innerText;
     vItem.innerText="";
     vItem.append(inputItemNum);

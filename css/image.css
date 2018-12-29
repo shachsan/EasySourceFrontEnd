@@ -6,6 +6,7 @@
 
 #vendor{
     display: none;
+    padding: 5px;
 }  
 
 #login{
@@ -15,6 +16,7 @@
 .heading{
     background-image: linear-gradient(-90deg, #ff6666, orange);
     padding: 10px;
+
 }
 
 .vendor{
@@ -93,7 +95,7 @@ table {
   #add-product{
       margin: 5px;
       float: right;
-      background-color: chartreuse;
+      /* background-color: chartreuse; */
   }
 
 
@@ -110,6 +112,7 @@ table {
       margin-right: 15px;
       padding: 5px;
       width: 25%;
+      box-shadow: 10px 10px grey;
   }
 
   .container {

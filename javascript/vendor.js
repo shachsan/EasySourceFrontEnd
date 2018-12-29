@@ -143,19 +143,9 @@ function loadBuyerScript(){
     $("#buyer-selection").click(function(e){
         
     if (e.target.innerText==="Barcode"){
-
+        debugger;
         const inputBarcode=e.target.nextElementSibling
         $(inputBarcode).toggle('slow', ()=>{
-            // let e = $.Event('keyup');
-            // e.which = 8; // Character 'backspace'
-            // // debugger;
-            // if($(inputBarcode).is(':hidden')){
-            //     while(inputBarcode.value!==''){
-
-            //         $(inputBarcode).trigger(e);
-            //     }
-            // }
-
             inputBarcode.value='';
             inputBarcode.addEventListener('keyup', searchByBarcode)
         });

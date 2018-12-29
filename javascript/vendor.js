@@ -41,7 +41,7 @@ $(function(){
             
             //fetch get buyer tables and verify if user exist
             //if user exist, hide vendor div and show buyer div, hide login div as well
-            fetchData('http://localhost:3000/api/v1/buyers')
+            fetchGetData('http://localhost:3000/api/v1/buyers')
                 .then((buyers)=>{
                     let accountFound=false;
                     for(let buyer of buyers){
@@ -63,7 +63,7 @@ $(function(){
         }else{
             //fetch get wholesale tables and verify if user exist
             //if user exist, hide buyer div and show vendor div
-            fetchData('http://localhost:3000/api/v1/vendors')
+            fetchGetData('http://localhost:3000/api/v1/vendors')
                 .then((vendors)=>{
                     let accountFound=false;
                     for(vendor of vendors){
@@ -102,13 +102,22 @@ $(function(){
         }
     });
 
-    async function fetchData (url) {
+    async function fetchGetData (url) {
         try {
           const resp = await fetch(url)
           return resp.json();
         } catch (err) {
              alert(err);
           }
+     }
+
+     async function fetchPostData(url, postObj){
+         try{
+             const resp = await fetch(url, postObj)
+             return resp.json();
+         }catch(err){
+             alert(err);
+         }
      }
   
 
@@ -126,7 +135,7 @@ function loadBuyerScript(){
     const divDisplaySelection = document.getElementById("option-selected");
 
 
-    fetchData(baseUrl+'products')
+    fetchGetData(baseUrl+'products')
         .then((products)=>showAllProducts(products));
 
 
@@ -914,7 +923,7 @@ function addNewProduct(e){
                 
                 console.log(cell);
                 if(cell.firstChild.name==='img_url'){
-                    cell.innerHTML=`<img src=${cell.firstChild.value}`;
+                    cell.innerHTML=`<img class="table-img" src=${cell.firstChild.value} width="30px" height="25px">`;
                 }else{
                 cell.innerText=cell.firstChild.value;
                 }
@@ -976,35 +985,50 @@ function addNewProduct(e){
             // Product does not exist - fetch post to both products and vp tables
             if(!productExist){
 
-                console.log(productObj);
-                //POST products table
-                fetch(`${baseUrl}products`, {
+                // console.log(productObj);
+                // //POST products table
+                // fetch(`${baseUrl}products`, {
+                //     method: 'POST',
+                //     headers:{'Content-Type':'application/json'},
+                //     body:JSON.stringify(productObj)
+                // }).then(function(res){
+                //     if(!res.ok){
+                //         throw Error(res.statusText);
+                //     }
+                //     console.log(res);
+                // }).catch(function(error){
+                //     alert('The following error has occurred: \n', error);
+                // })
+                let postObj={
                     method: 'POST',
                     headers:{'Content-Type':'application/json'},
                     body:JSON.stringify(productObj)
-                }).then(function(res){
-                    if(!res.ok){
-                        throw Error(res.statusText);
-                    }
-                    console.log(res);
-                }).catch(function(error){
-                    alert('The following error has occurred: \n', error);
-                })
+                }
 
-     
+                fetchPostData(baseUrl+'products', postObj)
+                    .then((productPosted)=>{
+                        console.log(productPosted);
+                        vpObj.product_id=productPosted.id;
+                        vpObj.vendor_id=vendorId;
+                        fetch(`${baseUrl}vendor_products`, {
+                            method: 'POST',
+                            headers:{'Content-Type':'application/json'},
+                            body:JSON.stringify(vpObj)
+                        }).then((res)=>{
+                            console.log(res);
+                        })
+                    })
                   
                 // function postVp(justAddedProd){
-                console.log(data.length);
-                vpObj.product_id=data.length+1; //this will assign the next number after the length of all products but this does not work if 'delete' function
-                                                // is implemented
-                vpObj.vendor_id=vendorId;
-                console.log(vpObj);
+                // console.log(data.length);
+                 //this will assign the next number after the length of all products but this does not work if 'delete' function
+                //                                 // is implemented
+                
+                // console.log("entering vp post");
+                // console.log(vpObj);
+
                 //POST vendor_products table
-                fetch(`${baseUrl}vendor_products`, {
-                    method: 'POST',
-                    headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify(vpObj)
-                })
+                
 
             }
             

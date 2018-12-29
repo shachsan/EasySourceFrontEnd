@@ -2,7 +2,7 @@ $(function(){
 
     
     let loginType; 
-    let baseUrl='http://localhost:3000/api/v1/';
+    const baseUrl='http://localhost:3000/api/v1/';
     function createTag(tagName){
         return document.createElement(tagName);
     }
@@ -143,7 +143,7 @@ function loadBuyerScript(){
     $("#buyer-selection").click(function(e){
         
     if (e.target.innerText==="Barcode"){
-        debugger;
+        // debugger;
         const inputBarcode=e.target.nextElementSibling
         $(inputBarcode).toggle('slow', ()=>{
             inputBarcode.value='';
@@ -564,14 +564,50 @@ function tableActionOnSingleClick(eventSingleClk){
             .then(prod=> editableItem(prod.vendor_products.length))    
     }
 
-    function editableItem(vCount){
-        if (vCount>1){
-            highlightItemNumAndPrice(eventSingleClk);
-        }else{
-            highlightEditableCells(eventSingleClk);
+    if(eventSingleClk.target.innerText==='Delete'){
+        let userAction=confirm("You are about to delete this item from your catelog. Please confirm!")
+        if (userAction==true){
+            deleteVendorItem(eventSingleClk);
         }
     }
+    
+}
 
+function deleteVendorItem(event){
+    //remove the product from the vendor list(table) in DOM
+    //delete the row for this item in vendor_products table
+        //need to send fetch delete method
+        //need either vpId or (product_id and vendor_id)
+        //do not delete the item from products table
+    console.log(event.target.parentNode.parentNode);
+    let vpId=event.target.parentNode.parentNode.dataset.vpid;
+    console.log(vpId);
+    fetch(baseUrl+`vendor_products/${vpId}`,{
+        method: 'DELETE'  
+    })
+        .then(res=>{
+            if(res.ok){
+                flashMessage();
+            }
+        })
+
+}
+
+
+function flashMessage(){
+    let flash=createTag('div');
+    flash.innerText="Product successfully deleted"
+    $('#flash').delay(500).fadeIn('normal', function() {
+        $(this).delay(2500).fadeOut();
+     });
+}
+
+function editableItem(vCount){
+    if (vCount>1){
+        highlightItemNumAndPrice(eventSingleClk);
+    }else{
+        highlightEditableCells(eventSingleClk);
+    }
 }
 
 function getCurrentRowChilds(e){

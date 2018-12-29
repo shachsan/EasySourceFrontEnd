@@ -435,7 +435,8 @@ function showAllVendorItems(vendorDetails){
         }
 }
 
-//test code function called by test1
+
+
     function populateTable(data, product){
         // console.log(data);
         // for(let key in data){
@@ -484,7 +485,7 @@ function showAllVendorItems(vendorDetails){
 
         //Create Update to toggle with Edit button and set to display none once created
         //make it visible once Edit button is click
-        let updateButton=document.createElement('button');
+        let updateButton=createTag('button');
         updateButton.setAttribute('class', 'item-action');
         updateButton.setAttribute('name', 'updateAll');
         updateButton.innerText="Update";
@@ -497,7 +498,7 @@ function showAllVendorItems(vendorDetails){
         updtBtnPriceNitem.innerText="Update";
         updtBtnPriceNitem.style.display='none';
 
-        let deleteBtn=document.createElement('button');
+        let deleteBtn=createTag('button');
         deleteBtn.setAttribute('class', 'item-action btn btn-danger');
         deleteBtn.innerText="Delete";
         // deleteBtn.addEventListener('click', deleteItem);
@@ -507,9 +508,7 @@ function showAllVendorItems(vendorDetails){
         cellAction.append(updtBtnPriceNitem);
         cellAction.append(deleteBtn);
 
-        
-        
-    // }
+       
 }
 
 
@@ -568,7 +567,7 @@ function tableActionOnSingleClick(eventSingleClk){
 
     if(eventSingleClk.target.innerText==='Edit'){
         
-        let id=eventSingleClk.target.parentNode.parentNode.id;
+        let id=eventSingleClk.target.parentNode.parentNode.id;//this willl take to the current row tr which has id attr set to current row product id
         fetch(`http://localhost:3000/api/v1/products/${id}`)
             .then(res=>res.json())
             .then(prod=> editableItem(prod.vendor_products.length))    
@@ -924,6 +923,7 @@ function addNewProduct(e){
                 console.log(cell);
                 if(cell.firstChild.name==='img_url'){
                     cell.innerHTML=`<img class="table-img" src=${cell.firstChild.value} width="30px" height="25px">`;
+                
                 }else{
                 cell.innerText=cell.firstChild.value;
                 }

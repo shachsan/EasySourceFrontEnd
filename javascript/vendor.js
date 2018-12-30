@@ -7,6 +7,31 @@ $(function(){
         return document.createElement(tagName);
     }
 
+    function fetchCategory(ele){
+        const categorySelBox=createTag('select');
+        fetch('http://localhost:3000/api/v1/categories')
+            .then(res => res.json())
+            .then((cats)=>{
+                    for(let cat of cats){
+                        const option=createTag('option');
+                        option.value = cat.main_cat;
+                        option.innerText = cat.main_cat;
+                        categorySelBox.append(option);
+                    }
+                    ele.parentNode.append(categorySelBox);
+                    $(ele).fadeIn();
+                })
+                
+                return categorySelBox;
+     
+    }
+    
+    // function createCategorySelectBox(cats, ele){
+    //     // ele.style.display='inline';
+        
+    //     // categorySelBox.addEventListener('change', searchByCategory);
+    // }
+
     /////login Js script -------start here ----------
     $("#login-button").click(function(){
         $(this).fadeOut();
@@ -166,7 +191,8 @@ function loadBuyerScript(){
         if (e.target.nextElementSibling){
             e.target.nextElementSibling.remove();
         }else{
-            fetchCategory(e.target);
+            let selectBox=fetchCategory(e.target);
+            selectBox.addEventListener('change', searchByCategory);
         }
     }
 })
@@ -196,26 +222,26 @@ function createVendorSelectBox(vendors, ele){
     vendorSelBox.addEventListener('change', searchByVendor)
 }
 
-function fetchCategory(ele){
-    fetch('http://localhost:3000/api/v1/categories')
-        .then(res => res.json())
-        .then(cats => createCategorySelectBox(cats, ele));
+// function fetchCategory(ele){
+//     fetch('http://localhost:3000/api/v1/categories')
+//         .then(res => res.json())
+//         .then(cats => createCategorySelectBox(cats, ele));
  
-}
+// }
 
-function createCategorySelectBox(cats, ele){
-    const categorySelBox=document.createElement('select');
-    for(let cat of cats){
-        const option=document.createElement('option');
-        option.value = cat.main_cat;
-        option.innerText = cat.main_cat;
-        categorySelBox.append(option);
-    }
-    ele.parentNode.append(categorySelBox);
-    // ele.style.display='inline';
-    $(ele).fadeIn();
-    categorySelBox.addEventListener('change', searchByCategory);
-}
+// function createCategorySelectBox(cats, ele){
+//     const categorySelBox=createTag('select');
+//     for(let cat of cats){
+//         const option=document.createElement('option');
+//         option.value = cat.main_cat;
+//         option.innerText = cat.main_cat;
+//         categorySelBox.append(option);
+//     }
+//     ele.parentNode.append(categorySelBox);
+//     // ele.style.display='inline';
+//     $(ele).fadeIn();
+//     categorySelBox.addEventListener('change', searchByCategory);
+// }
 
 
 function showAllProducts(products){
@@ -417,17 +443,13 @@ function loadVendorScript(){
                 // inputName.style.display="inline";
                 $(inputName).toggle(800);
                 inputName.addEventListener('keyup', updateTableByName)
-            }else if (e.target.innerText==="Vendor"){
-                if (e.target.nextElementSibling){
-                    e.target.nextElementSibling.remove();
-                }else{
-                    fetchVendors(e.target);
-                }
+            
             }else if (e.target.innerText==="Category"){
                 if (e.target.nextElementSibling){
                     e.target.nextElementSibling.remove();
                 }else{
-                    fetchCategory(e.target);
+                    let selectBox=fetchCategory(e.target);
+                    selectBox.addEventListener('change', updateTableByCat);
                 }
             }
         })
@@ -456,11 +478,11 @@ function updateTableByName(e){
     const searchName=e.target.value;
         const tableRows=tableProduct.rows;
         Array.from(tableRows).forEach(function(row){
-            let tdBar=row.querySelector('[name="name"]');
-            console.log(tdBar);
-            if(tdBar){
+            let tdName=row.querySelector('[name="name"]');
+            console.log(tdName);
+            if(tdName){
                 
-                if(tdBar.innerText.toLowerCase().includes(searchName.toLowerCase())){
+                if(tdName.innerText.toLowerCase().includes(searchName.toLowerCase())){
                     row.style.display='table-row';
                 }else{
                     row.style.display='none';
@@ -468,6 +490,24 @@ function updateTableByName(e){
             }
         })  
 }
+
+function updateTableByCat(e){
+    const tableRows=tableProduct.rows;
+        Array.from(tableRows).forEach(function(row){
+            row.style.display="table-row";
+            let tdCat=row.querySelector('[name="category_id"]');
+            console.log(tdCat);
+            if(tdCat){
+                
+                if(tdCat.innerText.toLowerCase().includes(e.target.value.toLowerCase())){
+                    row.style.display='table-row';
+                }else{
+                    row.style.display='none';
+                }
+            }
+        })  
+}
+
 //Search function implemention ---end--
 
 
@@ -634,7 +674,7 @@ function updateTableByName(e){
             let id=eventSingleClk.target.parentNode.parentNode.id;
             fetch(`http://localhost:3000/api/v1/products/${id}`)
                 .then(res=>res.json())
-                .then(prod=> editableItem(prod.vendor_products.length))    
+                .then(prod=> editableItem(eventSingleClk, prod.vendor_products.length))    
         }
 
         if(eventSingleClk.target.innerText==='Delete'){
@@ -683,7 +723,7 @@ function updateTableByName(e){
         });
     }
 
-    function editableItem(vCount){
+    function editableItem(eventSingleClk, vCount){
         if (vCount>1){
             highlightItemNumAndPrice(eventSingleClk);
         }else{
@@ -924,6 +964,7 @@ function updateTableByName(e){
                 
                 let itemSelectDiv=createTag('div');
                 let ul=createTag('ul');
+        
                 for(let product of allProducts){
                     let strBarcode=product.barcode.toString();
                     // console.log(product);
@@ -993,7 +1034,9 @@ function updateTableByName(e){
 
 
     function addNewProduct(e){
-        let rowCells=getCurrentRowChilds(e);
+        let currentTr=e.target.parentNode.parentNode;
+        let rowCells=currentTr.childNodes;
+        // let rowCells=getCurrentRowChilds(e);
         let requiredCellsEmpty=false;
         let productExist=false;
 
@@ -1020,14 +1063,13 @@ function updateTableByName(e){
         }
 
         if(!requiredCellsEmpty){
-            // debugger;
+            
 
             //if add button's dataset item value is 'exist' do fetch post to vp table
             if(e.target.dataset.item==='exist'){
 
                 //set td innerText to the values of input boxes and remove the inputboxes
                 for(let cell of rowCells){
-                    
                     console.log(cell);
                     if(cell.firstChild.name==='img_url'){
                         cell.innerHTML=`<img class="table-img" src=${cell.firstChild.value} width="30px" height="25px">`;
@@ -1047,100 +1089,141 @@ function updateTableByName(e){
                         product_id:e.target.dataset.id,
                         vendor_id:vendorId
                     })
-                })
+                }).then(res=>res.json())
+                  .then((res)=>{
+                    console.log(currentTr);
+                    currentTr.setAttribute('id',res.product.id);
+                  })
+
+                //hide the item found div
+                $('#item-found').hide();
+                
+                // console.log(e.target.previousElementSibling);
+                // These lines of codes are for bringing Edit and Delet buttons after user clicks on button
+                //Need to refactor because these are repeating
+                let editButton=createTag('button');
+                editButton.setAttribute('class', 'item-action btn btn-primary');
+                editButton.innerText="Edit";
+                // editButton.addEventListener('click', editItem);
+
+                //Create Update to toggle with Edit button and set to display none once created
+                //make it visible once Edit button is click
+                let updateButton=document.createElement('button');
+                updateButton.setAttribute('class', 'item-action');
+                updateButton.setAttribute('name', 'updateAll');
+                updateButton.innerText="Update";
+                updateButton.style.display='none';
+
+                //Since the update button works differently, needed 2 update buttons
+                let updtBtnPriceNitem=createTag('button');
+                updtBtnPriceNitem.setAttribute('class', 'item-action');
+                updtBtnPriceNitem.setAttribute('name', 'updatePnI');
+                updtBtnPriceNitem.innerText="Update";
+                updtBtnPriceNitem.style.display='none';
+
+                let deleteBtn=document.createElement('button');
+                deleteBtn.setAttribute('class', 'item-action btn btn-danger');
+                deleteBtn.innerText="Delete";
+
+                let actionCell=rowCells[rowCells.length-1];
+                actionCell.append(editButton);
+                actionCell.append(updateButton);
+                actionCell.append(updtBtnPriceNitem);
+                actionCell.append(deleteBtn);
+
             }else{
 
             //check if the product is existing product
             //if product already exists, fetch post to vendor_products table
             //if product is not existing product, fetch post both products and vendor_products tables
-            getAllProducts().then((data)=>{
-                let productObj={};
-                let vpObj={};
+                getAllProducts().then((data)=>{
+                    let productObj={};
+                    let vpObj={};
 
-                //collect user inputs from cells and build product and vp objects
-                for(let cellData of rowCells){
+                    //collect user inputs from cells and build product and vp objects
+                    for(let cellData of rowCells){
 
-                    if(getProdOnlyAttrs().includes(cellData.firstChild.name)){
-                        productObj[cellData.firstChild.name]=cellData.firstChild.value;
-                    }else{
-                        vpObj[cellData.firstChild.name]=cellData.firstChild.value;
+                        if(getProdOnlyAttrs().includes(cellData.firstChild.name)){
+                            productObj[cellData.firstChild.name]=cellData.firstChild.value;
+                        }else{
+                            vpObj[cellData.firstChild.name]=cellData.firstChild.value;
+                        }
                     }
-                }
-                
-                //Once objects are build, check if the user entered product is a pre-existing product
-                //if pre-exist, FETCH POST vp tables
-                for(let product of data){
-                    if (product.barcode===productObj.barcode){
-                        //prepare vpObj for post method
-                        vpObj.product_id=product.id;
-                        vpObj.vendor_id=vendorId;
-
-                        //fetch post only to vendor_products table
-                        fetch(`${baseUrl}vendor_products`, {
-                            method: 'POST',
-                            headers:{'Content-Type':'application/json'},
-                            body:JSON.stringify(vpObj)
-                        })
-
-                        productExist=true;     
-                        break;
-                    }
-
-                
-                }
-
-                // Product does not exist - fetch post to both products and vp tables
-                if(!productExist){
-
-                    // console.log(productObj);
-                    // //POST products table
-                    // fetch(`${baseUrl}products`, {
-                    //     method: 'POST',
-                    //     headers:{'Content-Type':'application/json'},
-                    //     body:JSON.stringify(productObj)
-                    // }).then(function(res){
-                    //     if(!res.ok){
-                    //         throw Error(res.statusText);
-                    //     }
-                    //     console.log(res);
-                    // }).catch(function(error){
-                    //     alert('The following error has occurred: \n', error);
-                    // })
-                    let postObj={
-                        method: 'POST',
-                        headers:{'Content-Type':'application/json'},
-                        body:JSON.stringify(productObj)
-                    }
-
-                    fetchPostData(baseUrl+'products', postObj)
-                        .then((productPosted)=>{
-                            console.log(productPosted);
-                            vpObj.product_id=productPosted.id;
+                    
+                    //Once objects are build, check if the user entered product is a pre-existing product
+                    //if pre-exist, FETCH POST vp tables
+                    for(let product of data){
+                        if (product.barcode===productObj.barcode){
+                            //prepare vpObj for post method
+                            vpObj.product_id=product.id;
                             vpObj.vendor_id=vendorId;
+
+                            //fetch post only to vendor_products table
                             fetch(`${baseUrl}vendor_products`, {
                                 method: 'POST',
                                 headers:{'Content-Type':'application/json'},
                                 body:JSON.stringify(vpObj)
-                            }).then((res)=>{
-                                console.log(res);
                             })
-                        })
-                    
-                    // function postVp(justAddedProd){
-                    // console.log(data.length);
-                    //this will assign the next number after the length of all products but this does not work if 'delete' function
-                    //                                 // is implemented
-                    
-                    // console.log("entering vp post");
-                    // console.log(vpObj);
 
-                    //POST vendor_products table
-                    
+                            productExist=true;     
+                            break;
+                        }
 
-                }
-                
-            })
-        }
+                    
+                    }
+
+                    // Product does not exist - fetch post to both products and vp tables
+                    if(!productExist){
+
+                        // console.log(productObj);
+                        // //POST products table
+                        // fetch(`${baseUrl}products`, {
+                        //     method: 'POST',
+                        //     headers:{'Content-Type':'application/json'},
+                        //     body:JSON.stringify(productObj)
+                        // }).then(function(res){
+                        //     if(!res.ok){
+                        //         throw Error(res.statusText);
+                        //     }
+                        //     console.log(res);
+                        // }).catch(function(error){
+                        //     alert('The following error has occurred: \n', error);
+                        // })
+                        let postObj={
+                            method: 'POST',
+                            headers:{'Content-Type':'application/json'},
+                            body:JSON.stringify(productObj)
+                        }
+
+                        fetchPostData(baseUrl+'products', postObj)
+                            .then((productPosted)=>{
+                                console.log(productPosted);
+                                vpObj.product_id=productPosted.id;
+                                vpObj.vendor_id=vendorId;
+                                fetch(`${baseUrl}vendor_products`, {
+                                    method: 'POST',
+                                    headers:{'Content-Type':'application/json'},
+                                    body:JSON.stringify(vpObj)
+                                }).then((res)=>{
+                                    console.log(res);
+                                })
+                            })
+                        
+                        // function postVp(justAddedProd){
+                        // console.log(data.length);
+                        //this will assign the next number after the length of all products but this does not work if 'delete' function
+                        //                                 // is implemented
+                        
+                        // console.log("entering vp post");
+                        // console.log(vpObj);
+
+                        //POST vendor_products table
+                        
+
+                    }
+                    
+                })
+            }
 
         }
     }

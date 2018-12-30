@@ -51,7 +51,9 @@
     border: 1px solid orange;
 }
 
-
+.nav-vendor{
+    border: 2px solid black;
+}
 
 .product, .image-div, .vendor-list-div, .product-detail-div{ 
     vertical-align: top;
@@ -87,14 +89,22 @@ table {
   #flash{
     display: none;
     position: absolute;
-    top: 50%;
+    background: yellow;
+    text-align: center;
+    width: 400px;
+    height: 50px;
+    z-index: 10;
+
+    top: 90%;
+    left: 40%;
+    /* transform: translate(-50%, -50%); */
+    /* top: 50%;
     left: 50%;
     margin-top: -50px;
-    margin-left: -50px;
-    width: 100px;
-    height: 100px;
+    margin-left: -50px; */
   }
 
+  
   input[type=text]{
     
     width: 100%;

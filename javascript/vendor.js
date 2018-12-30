@@ -376,696 +376,777 @@ function searchByCategory(e){
 //////Vendors Js script --------- start here -------
 
 function loadVendorScript(){
-//from vendors page
-const divMain=document.getElementsByName('main')[0];
-console.log(divMain);
-const divVendorInfo = document.getElementById('vendor-info');
-const divProductDetail=document.getElementById('all-product');
-const tableProduct=document.getElementById('product-table');
-const buttonAddNewBtn=document.getElementById('add-product');
-const errorMsg=document.getElementsByClassName('error-msg')[0];
-// let row;
-// console.log(tableProduct);
-tableProduct.addEventListener('dblclick', tableAction);
-tableProduct.addEventListener('click', tableActionOnSingleClick);
-buttonAddNewBtn.addEventListener('click', addNewItem);
+    //from vendors page
+    const divMain=document.getElementsByName('main')[0];
+    // console.log(divMain);
+    const navDiv=document.getElementById('nav-div');
+    const divVendorInfo = document.getElementById('vendor-info');
+    const divProductDetail=document.getElementById('all-product');
+    const tableProduct=document.getElementById('product-table');
+    const buttonAddNewBtn=document.getElementById('add-product');
+    const errorMsg=document.getElementsByClassName('error-msg')[0];
+    const vendorContainerDiv=document.getElementById('vendor');
+    // let row;
+    // console.log(tableProduct);
+    tableProduct.addEventListener('dblclick', tableAction);
+    tableProduct.addEventListener('click', tableActionOnSingleClick);
+    buttonAddNewBtn.addEventListener('click', addNewItem);
 
-//Base URL for api
-const baseUrl=`http://localhost:3000/api/v1/`;
+    //Base URL for api
+    const baseUrl=`http://localhost:3000/api/v1/`;
 
-let vendorId=divMain.id;//hardcoded id for testing, set this id to vendor id once vendor logs in
-console.log(vendorId);
+    let vendorId=divMain.id;
 
-fetchVendorItems(vendorId);
-
+    fetchVendorItems(vendorId);
 
 
-function fetchVendorItems(id){
-    fetch(`http://localhost:3000/api/v1/vendors/${vendorId}`)
-        .then(res=>res.json())
-        .then(vendorDetails=>showAllVendorItems(vendorDetails))
+    // search selection ---starts here----
+        $("#vendor-selection").click(function(e){
+        
+            if (e.target.innerText==="Barcode"){
+                // debugger;
+                const inputBarcode=e.target.nextElementSibling
+                $(inputBarcode).toggle('slow', ()=>{
+                    inputBarcode.value='';
+                    inputBarcode.addEventListener('keyup', updateTableByBarcode)
+                });
+                // inputBarcode.style.display="inline";
+        
+            }else if (e.target.innerText==="Name"){
+                const inputName=e.target.nextElementSibling
+                // inputName.style.display="inline";
+                $(inputName).toggle(800);
+                inputName.addEventListener('keyup', updateTableByName)
+            }else if (e.target.innerText==="Vendor"){
+                if (e.target.nextElementSibling){
+                    e.target.nextElementSibling.remove();
+                }else{
+                    fetchVendors(e.target);
+                }
+            }else if (e.target.innerText==="Category"){
+                if (e.target.nextElementSibling){
+                    e.target.nextElementSibling.remove();
+                }else{
+                    fetchCategory(e.target);
+                }
+            }
+        })
+//Search options selection ---ends here---        
+
+//Search functions implemention--start
+        //search by barcode
+function updateTableByBarcode(e){
+        let searchBarcode=e.target.value;
+        let tableRows=tableProduct.rows;
+        Array.from(tableRows).forEach(function(row){
+            let tdBar=row.querySelector('[name="barcode"]');
+            console.log(tdBar);
+            if(tdBar){
+                if(tdBar.innerText.trim().startsWith(searchBarcode)){
+                    row.style.display='table-row';
+                }else{
+                    row.style.display='none';
+                }
+            }
+        })  
 }
 
+    //search by Name
+function updateTableByName(e){
+    const searchName=e.target.value;
+        const tableRows=tableProduct.rows;
+        Array.from(tableRows).forEach(function(row){
+            let tdBar=row.querySelector('[name="name"]');
+            console.log(tdBar);
+            if(tdBar){
+                
+                if(tdBar.innerText.toLowerCase().includes(searchName.toLowerCase())){
+                    row.style.display='table-row';
+                }else{
+                    row.style.display='none';
+                }
+            }
+        })  
+}
+//Search function implemention ---end--
 
-function showAllVendorItems(vendorDetails){
-    divVendorInfo.innerHTML=`<div class="block" style="display:inline-block"><p><strong>Name</strong>: ${vendorDetails.name}</p>`+
-                            `<p><strong>Username</strong>: ${vendorDetails.username}`+
-                            `<p><strong>Email</strong>: ${vendorDetails.email}`+
-                            `<p><strong>Minimum set?</strong>: ${vendorDetails.has_min}`+
-                            `<p><strong>Minimum Amount</strong>: ${vendorDetails.min_amount}`+
-                            `</div>`
 
 
-        for(let product of vendorDetails.products){
+    function fetchVendorItems(id){
+        fetch(`http://localhost:3000/api/v1/vendors/${vendorId}`)
+            .then(res=>res.json())
+            .then(vendorDetails=>showAllVendorItems(vendorDetails))
+    }
+
+
+    function showAllVendorItems(vendorDetails){
+        navDiv.querySelector('nav a').innerText=vendorDetails.name;
+        divVendorInfo.innerHTML=`<div class="block" style="display:inline-block"><p><strong>Name</strong>: ${vendorDetails.name}</p>`+
+                                `<p><strong>Username</strong>: ${vendorDetails.username}`+
+                                `<p><strong>Email</strong>: ${vendorDetails.email}`+
+                                `<p><strong>Minimum set?</strong>: ${vendorDetails.has_min}`+
+                                `<p><strong>Minimum Amount</strong>: ${vendorDetails.min_amount}`+
+                                `</div>`
+
+
+            for(let product of vendorDetails.products){
+                
+            let id = product.product_id
+            fetch(`http://localhost:3000/api/v1/products/${id}`)
+                .then(res=>res.json())
+                .then(productInfo=>populateTable(productInfo, product))
+            }
+    }
+
+    //test code function called by test1
+        function populateTable(data, product){
+            // console.log(data);
+            // for(let key in data){
+            let row = tableProduct.insertRow();
+            row.setAttribute('id',product.product_id);
+            row.setAttribute('data-vpid', product.id);
+
+            let cellImage = row.insertCell();
+
+            let cellName = row.insertCell();
+            cellName.setAttribute('name', 'name')
+
+            let cellSize = row.insertCell();
+            cellSize.setAttribute('name', 'size')
+
+            let cellBarcode = row.insertCell();
+            cellBarcode.setAttribute('name', 'barcode')
+
+            let cellBrand = row.insertCell();
+            cellBrand.setAttribute('name', 'brand')
+
+            let cellCategory = row.insertCell();
+            cellCategory.setAttribute('name', 'category_id')
             
-        let id = product.product_id
-        fetch(`http://localhost:3000/api/v1/products/${id}`)
-            .then(res=>res.json())
-            .then(productInfo=>populateTable(productInfo, product))
-        }
-}
+            cellImage.innerHTML = `<img src=${data.img_url} class="table-img">`
+            cellName.innerText = data.name;
+            cellSize.innerText = data.size;
+            cellBarcode.innerText = data.barcode;
+            cellBrand.innerText = data.brand;
+            cellCategory.innerText = data.category_type;
 
-//test code function called by test1
-    function populateTable(data, product){
-        // console.log(data);
-        // for(let key in data){
-        let row = tableProduct.insertRow();
-        row.setAttribute('id',product.product_id);
-        row.setAttribute('data-vpid', product.id);
+            let cellVitem=row.insertCell();
+            cellVitem.setAttribute('name', 'v_item')
+            cellVitem.innerText=product.v_item;
 
-        let cellImage = row.insertCell();
+            let cellPrice=row.insertCell();
+            cellPrice.setAttribute('name', 'case_price')
+            cellPrice.innerText=product.case_price;
+            
+            let cellAction=row.insertCell();
+            
+            let editButton=createTag('button');
+            editButton.setAttribute('class', 'item-action btn btn-primary');
+            editButton.innerText="Edit";
+            // editButton.addEventListener('click', editItem);
 
-        let cellName = row.insertCell();
-        cellName.setAttribute('name', 'name')
+            //Create Update to toggle with Edit button and set to display none once created
+            //make it visible once Edit button is click
+            let updateButton=document.createElement('button');
+            updateButton.setAttribute('class', 'item-action');
+            updateButton.setAttribute('name', 'updateAll');
+            updateButton.innerText="Update";
+            updateButton.style.display='none';
 
-        let cellSize = row.insertCell();
-        cellSize.setAttribute('name', 'size')
+            //Since the update button works differently, needed 2 update buttons
+            let updtBtnPriceNitem=createTag('button');
+            updtBtnPriceNitem.setAttribute('class', 'item-action');
+            updtBtnPriceNitem.setAttribute('name', 'updatePnI');
+            updtBtnPriceNitem.innerText="Update";
+            updtBtnPriceNitem.style.display='none';
 
-        let cellBarcode = row.insertCell();
-        cellBarcode.setAttribute('name', 'barcode')
+            let deleteBtn=document.createElement('button');
+            deleteBtn.setAttribute('class', 'item-action btn btn-danger');
+            deleteBtn.innerText="Delete";
+            // deleteBtn.addEventListener('click', deleteItem);
 
-        let cellBrand = row.insertCell();
-        cellBrand.setAttribute('name', 'brand')
+            cellAction.append(editButton);
+            cellAction.append(updateButton);
+            cellAction.append(updtBtnPriceNitem);
+            cellAction.append(deleteBtn);
 
-        let cellCategory = row.insertCell();
-        cellCategory.setAttribute('name', 'category_id')
-        
-        cellImage.innerHTML = `<img src=${data.img_url} class="table-img">`
-        cellName.innerText = data.name;
-        cellSize.innerText = data.size;
-        cellBarcode.innerText = data.barcode;
-        cellBrand.innerText = data.brand;
-        cellCategory.innerText = data.category_type;
-
-        let cellVitem=row.insertCell();
-        cellVitem.setAttribute('name', 'v_item')
-        cellVitem.innerText=product.v_item;
-
-        let cellPrice=row.insertCell();
-        cellPrice.setAttribute('name', 'case_price')
-        cellPrice.innerText=product.case_price;
-        
-        let cellAction=row.insertCell();
-        
-        let editButton=createTag('button');
-        editButton.setAttribute('class', 'item-action btn btn-primary');
-        editButton.innerText="Edit";
-        // editButton.addEventListener('click', editItem);
-
-        //Create Update to toggle with Edit button and set to display none once created
-        //make it visible once Edit button is click
-        let updateButton=document.createElement('button');
-        updateButton.setAttribute('class', 'item-action');
-        updateButton.setAttribute('name', 'updateAll');
-        updateButton.innerText="Update";
-        updateButton.style.display='none';
-
-        //Since the update button works differently, needed 2 update buttons
-        let updtBtnPriceNitem=createTag('button');
-        updtBtnPriceNitem.setAttribute('class', 'item-action');
-        updtBtnPriceNitem.setAttribute('name', 'updatePnI');
-        updtBtnPriceNitem.innerText="Update";
-        updtBtnPriceNitem.style.display='none';
-
-        let deleteBtn=document.createElement('button');
-        deleteBtn.setAttribute('class', 'item-action btn btn-danger');
-        deleteBtn.innerText="Delete";
-        // deleteBtn.addEventListener('click', deleteItem);
-
-        cellAction.append(editButton);
-        cellAction.append(updateButton);
-        cellAction.append(updtBtnPriceNitem);
-        cellAction.append(deleteBtn);
-
-        
-        
-    // }
-}
-
-
-function tableAction(eventDblClk){
-    console.log(eventDblClk.target);
-    let targetEle=eventDblClk.target;
-    let editCell=createTag('input');
-    editCell.value=eventDblClk.target.innerText;
-    editCell.setAttribute('class','edit-cell');
-    editCell.setAttribute('type', 'text');
-    editCell.setAttribute('onfocus','this.select()')
-    editCell.autofocus='true';
-
-    targetEle.innerText="";
-    targetEle.append(editCell);
-
-    editCell.addEventListener('keydown', (eventKd)=>{
-        if (eventKd.key==='Enter'){
-            targetEle.innerText=editCell.value;
-            editCell.remove();
-
-            // fetch(`http://localhost:3000/`)
-        }
-    })
-
- 
-}
-
-function tableActionOnSingleClick(eventSingleClk){
-    if(eventSingleClk.target.className==='input-cell'){
-        eventSingleClk.target.style.backgroundColor='transparent';
-        errorMsg.style.display='none';
-    }
-    console.log(eventSingleClk.target.name);
-
-    if(eventSingleClk.target.name==='barcode'){
-        // console.log("barcode filled is click");
-        getAllProducts().then((allProducts)=>{//added new line
-            // console.log((allProducts));
-            eventSingleClk.target.addEventListener('keyup', function(e){
-                lookupProductForBarcode(e, allProducts)
-            });
-        })//added new line
+            
+            
+        // }
     }
 
-    //if add button inside new cell is click
-    if(eventSingleClk.target.id==='add-item'){
-        addNewProduct(eventSingleClk);
-    }
 
-    if(eventSingleClk.target.name==='updatePnI'){
-        // console.log("Update button P&I click");
-        updatePriceAndItemNum(eventSingleClk);
+    function tableAction(eventDblClk){
+        console.log(eventDblClk.target);
+        let targetEle=eventDblClk.target;
+        let editCell=createTag('input');
+        editCell.value=eventDblClk.target.innerText;
+        editCell.setAttribute('class','edit-cell');
+        editCell.setAttribute('type', 'text');
+        editCell.setAttribute('onfocus','this.select()')
+        editCell.autofocus='true';
 
-    }
+        targetEle.innerText="";
+        targetEle.append(editCell);
 
-    if(eventSingleClk.target.innerText==='Edit'){
-        
-        let id=eventSingleClk.target.parentNode.parentNode.id;
-        fetch(`http://localhost:3000/api/v1/products/${id}`)
-            .then(res=>res.json())
-            .then(prod=> editableItem(prod.vendor_products.length))    
-    }
+        editCell.addEventListener('keydown', (eventKd)=>{
+            if (eventKd.key==='Enter'){
+                targetEle.innerText=editCell.value;
+                editCell.remove();
 
-    if(eventSingleClk.target.innerText==='Delete'){
-        let userAction=confirm("You are about to delete this item from your catelog. Please confirm!")
-        if (userAction==true){
-            deleteVendorItem(eventSingleClk);
-        }
-    }
+                // fetch(`http://localhost:3000/`)
+            }
+        })
+
     
-}
+    }
 
-function deleteVendorItem(event){
-    //remove the product from the vendor list(table) in DOM
-    //delete the row for this item in vendor_products table
+    function tableActionOnSingleClick(eventSingleClk){
+        if(eventSingleClk.target.className==='input-cell'){
+            eventSingleClk.target.style.backgroundColor='transparent';
+            errorMsg.style.display='none';
+        }
+        console.log(eventSingleClk.target.name);
+
+        if(eventSingleClk.target.name==='barcode'){
+            // console.log("barcode filled is click");
+            getAllProducts().then((allProducts)=>{//added new line
+                // console.log((allProducts));
+                eventSingleClk.target.addEventListener('keyup', function(e){
+                    lookupProductForBarcode(e, allProducts)
+                });
+            })//added new line
+        }
+
+        //if add button inside new cell is click
+        if(eventSingleClk.target.id==='add-item'){
+            addNewProduct(eventSingleClk);
+        }
+
+        if(eventSingleClk.target.name==='updatePnI'){
+            // console.log("Update button P&I click");
+            updatePriceAndItemNum(eventSingleClk);
+
+        }
+
+        if(eventSingleClk.target.innerText==='Edit'){
+            
+            let id=eventSingleClk.target.parentNode.parentNode.id;
+            fetch(`http://localhost:3000/api/v1/products/${id}`)
+                .then(res=>res.json())
+                .then(prod=> editableItem(prod.vendor_products.length))    
+        }
+
+        if(eventSingleClk.target.innerText==='Delete'){
+            let userAction=confirm("You are about to delete this item from your catelog. Please confirm!")
+            if (userAction==true){
+                deleteVendorItem(eventSingleClk);
+            }
+        }
+        
+    }
+
+    function deleteVendorItem(event){
+        
+        //remove the product from the vendor list(table) in DOM-
+        //delete the row for this item in vendor_products table
         //need to send fetch delete method
         //need either vpId or (product_id and vendor_id)
         //do not delete the item from products table
-    console.log(event.target.parentNode.parentNode);
-    let vpId=event.target.parentNode.parentNode.dataset.vpid;
-    console.log(vpId);
-    fetch(baseUrl+`vendor_products/${vpId}`,{
-        method: 'DELETE'  
-    })
-        .then(res=>{
-            if(res.ok){
-                flashMessage();
-            }
-        })
-
-}
-
-
-function flashMessage(){
-    let flash=createTag('div');
-    flash.innerText="Product successfully deleted"
-    $('#flash').delay(500).fadeIn('normal', function() {
-        $(this).delay(2500).fadeOut();
-     });
-}
-
-function editableItem(vCount){
-    if (vCount>1){
-        highlightItemNumAndPrice(eventSingleClk);
-    }else{
-        highlightEditableCells(eventSingleClk);
-    }
-}
-
-function getCurrentRowChilds(e){
-    let currentTr=e.target.parentNode.parentNode;
-    let currentTrChilds=currentTr.childNodes;
-    return currentTrChilds;
-}
-
-function highlightEditableCells(e){
-    // console.log(e.bubbles);
-    let currentTr=e.target.parentNode.parentNode;
-    let currentTrChilds=currentTr.childNodes;
-
-    // console.log(currentTrChilds);
-    currentTrChilds.forEach((td,i) => {
-        // console.log(i);
-        if(i!==8 && i!==0){
-           let editCell=createTag('input');
-            editCell.value=td.innerText
-            editCell.setAttribute('type', 'text');
-            editCell.setAttribute('class','edit-cell');
-            editCell.setAttribute('onfocus','this.select()')
-            editCell.autofocus='true';
-
-            td.innerText="";
-            td.append(editCell);
-        }
-    });
-
-    e.target.style.display='none';//hide the edit button and display update button
-    e.target.nextElementSibling.style.display="inline"; //display update button
-
-    e.target.nextElementSibling.addEventListener('click', updateData);
-
-    // Action when vendor clicks on 'update' button
-    // e is still is the event object passed when clicked on the table
-    // console.log(e.target);
-    function updateData(eve){
-        // console.log(currentTrChilds);
+        // let currentRow=event.target.parentNode.parentNode;
+        let currentRow=event.target.parentNode.parentNode;
+        let vpId=currentRow.dataset.vpid;
+        // $(currentRow).slideUp(500).delay(800);
+        currentRow.style.backgroundColor='red';
+        $(currentRow).fadeOut(1000);
+        // currentRow.remove();
         
-        let currentRow=eve.target.parentNode.parentNode;
-        let id=currentRow.id;
-        // console.log(currentRow.data-vpid);
-        let vpid=currentRow.dataset.vpid;
-        console.log(vpid);
-        currentRowChilds=currentRow.childNodes;
-
-        let updateItems={};
-        let vpUpdateObj={};
-        // console.log(currentRowChilds);
-        currentRowChilds.forEach((td,i) => {
-            if(i!==8 && i!==0){
-                td.innerText=td.firstChild.value;
-                // console.log(td.getAttribute("name"));
-                let key=td.getAttribute("name");
-                if(key==='v_item' || key==='case_price'){
-                    vpUpdateObj[key]=td.innerText;
-                }else{
-
-                    updateItems[key]=td.innerText;
+        fetch(baseUrl+`vendor_products/${vpId}`,{
+            method: 'DELETE'  
+        })
+            .then(res=>{
+                if(res.ok){
+                    flashMessage();
                 }
-                // td.firstChild.remove();
-            }
-        })
-        // console.log(updateItems);
-        // console.log(vpUpdateObj);
-        eve.target.style.display='none';//hide the update button
-        eve.target.previousElementSibling.style.display='inline';//display edit button
-
-        //fectch update--product
-        fetch(`http://localhost:3000/api/v1/products/${id}`,{
-            method: 'PATCH',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify(updateItems)
-        })
-
-        //complete fetch update--product
-
-
-        //fetch update ---vendor_products for price and v_item
-        
-        fetch(`http://localhost:3000/api/v1/vendor_products/${vpid}`,{
-            method: 'PATCH',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify(vpUpdateObj)
-        })
-        //end of vendor_products update
+            })
 
     }
 
-}
 
-function getProdNvenProdAttrs(){
-    let attrs=["img_url", "name", "size", "barcode", "brand", "category_id", "v_item", "case_price"];
-    return attrs;
-}
+    function flashMessage(){
+        let flash=createTag('div');
+        flash.setAttribute('id', 'flash');
+        flash.innerText="Product successfully deleted"
+        vendorContainerDiv.append(flash);
+        $('#flash').delay(300).fadeIn('normal', function() {
+            $(this).delay(2500).fadeOut();
+        });
+    }
 
-function getProdOnlyAttrs(){
-    let attrs=["img_url", "name", "size", "barcode", "brand", "case_pack", "category_id"];
-    return attrs;
-}
-
-
-function addNewItem(){
-    let row=tableProduct.insertRow();
-    row.style.height="50px";
-    
-    getProdNvenProdAttrs().forEach(function(attr, i){
-        let cell=row.insertCell();
-
-        if(i!==9){
-            let input=createTag('input');
-            input.setAttribute('type', 'text');
-            input.setAttribute('class','input-cell')
-            input.setAttribute('name',attr)
-            cell.append(input);
+    function editableItem(vCount){
+        if (vCount>1){
+            highlightItemNumAndPrice(eventSingleClk);
+        }else{
+            highlightEditableCells(eventSingleClk);
         }
-    })
-
-    let actionCell=row.insertCell();
-    if (requiredFields()!==""){         //requiredFields functions not implemented yet
-        let addBtn=createTag('button')
-        addBtn.innerText='Add';
-        addBtn.setAttribute('id','add-item')
-        actionCell.append(addBtn);
     }
-}
 
-
-function requiredFields(){//need to implement this functionality, check if the fields are actually empty
-    return false;
-}
-
-
-function getEditBox(){
-    let inputPrice=createTag('input');
-    // inputPrice.setAttribute('name','editPrice')
-    inputPrice.style.width="60px";
-    inputPrice.style.height="30px";
-    
-    return inputPrice;
-}
-
-
-
-function highlightItemNumAndPrice(e){
-    alert("Other vendors also stock this product. So, full edit is not available. Editable cells will be highlighted.")
-    let price=e.target.parentNode.previousElementSibling;
-    // debugger;
-    let editPrice=getEditBox();
-    editPrice.setAttribute('name','editPrice');
-    editPrice.setAttribute('class','edit-cell')
-    editPrice.value=price.innerText;
-    // console.log(editPrice.value);
-    price.innerText="";
-    price.append(editPrice);
-
-    let vItem=price.previousElementSibling;
-    let inputItemNum=getEditBox();
-    inputItemNum.setAttribute('name','editItem')
-    inputItemNum.setAttribute('class','edit-cell')
-    inputItemNum.value=vItem.innerText;
-    vItem.innerText="";
-    vItem.append(inputItemNum);
-
-    e.target.style.display='none';//hide the edit button and display update button
-    e.target.nextElementSibling.nextElementSibling.style.display="inline"; //display update P&I button
-    
-
-}
-
-function updatePriceAndItemNum(e){
-        let currentRow=e.target.parentNode.parentNode;
-        let tdPrice=e.target.parentNode.previousElementSibling;
-        let tdVitem=tdPrice.previousElementSibling;
-        let newPrice=document.getElementsByName('editPrice')[0];
-        let newItemNum=document.getElementsByName('editItem')[0];
-        
-        let vpid=currentRow.dataset.vpid;
-        let vpUpdateObj={v_item:newItemNum.value, case_price:newPrice.value};
-        tdPrice.innerText=newPrice.value;
-        tdVitem.innerText=newItemNum.value;
-        newPrice.remove();
-        newItemNum.remove();
-        
-        e.target.style.display='none';//hide the update P&I button
-        e.target.previousElementSibling.previousElementSibling.style.display='inline';//display edit button
-
-        //fetch update ---vendor_products for price and v_item
-        
-        fetch(`http://localhost:3000/api/v1/vendor_products/${vpid}`,{
-            method: 'PATCH',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify(vpUpdateObj)
-        })
-        //end of vendor_products update
-
-    
-
-}
-
-//separate function to get all products---begin
-
-async function getAllProducts () {
-    try {
-      const resp = await fetch(baseUrl+'products')
-    //   console.log(resp)
-      return resp.json();
-    } catch (err) {
-         console.log(err)
-      }
- }
-
-
-
-function lookupProductForBarcode(e,allProducts){
-    let userUpc=e.target.value
-
-    //On below line, .filter methods remove the null value from the array since map returns undefined for not found item
-    let vendorProductsIds=Array.from(tableProduct.rows).map((row)=>Number(row.id)).filter(i=>i);
-    console.log(vendorProductsIds);
-    // console.log(tableProduct.rows);
-
-    if(!userUpc){
-        divVendorInfo.firstChild.nextElementSibling.remove();
-        return;
+    function getCurrentRowChilds(e){
+        let currentTr=e.target.parentNode.parentNode;
+        let currentTrChilds=currentTr.childNodes;
+        return currentTrChilds;
     }
-   
-            
-            if(divVendorInfo.firstChild.nextElementSibling){
-                divVendorInfo.firstChild.nextElementSibling.remove();
+
+    function highlightEditableCells(e){
+        // console.log(e.bubbles);
+        let currentTr=e.target.parentNode.parentNode;
+        let currentTrChilds=currentTr.childNodes;
+
+        // console.log(currentTrChilds);
+        currentTrChilds.forEach((td,i) => {
+            // console.log(i);
+            if(i!==8 && i!==0){
+            let editCell=createTag('input');
+                editCell.value=td.innerText
+                editCell.setAttribute('type', 'text');
+                editCell.setAttribute('class','edit-cell');
+                editCell.setAttribute('onfocus','this.select()')
+                editCell.autofocus='true';
+
+                td.innerText="";
+                td.append(editCell);
             }
+        });
+
+        e.target.style.display='none';//hide the edit button and display update button
+        e.target.nextElementSibling.style.display="inline"; //display update button
+
+        e.target.nextElementSibling.addEventListener('click', updateData);
+
+        // Action when vendor clicks on 'update' button
+        // e is still is the event object passed when clicked on the table
+        // console.log(e.target);
+        function updateData(eve){
+            // console.log(currentTrChilds);
             
-            let itemSelectDiv=createTag('div');
-            let ul=createTag('ul');
-            for(let product of allProducts){
-                let strBarcode=product.barcode.toString();
-                // console.log(product);
-                // console.log(typeof(product.barcode));
-                if(strBarcode.startsWith(userUpc)){
-                    itemSelectDiv.setAttribute('id', 'item-found');
-                    itemSelectDiv.setAttribute('class', 'block');
-                    itemSelectDiv.style.display='inline-block';
-                    
-                    //do not create li for the items that this vendor already stock
-                    if(!vendorProductsIds.includes(product.id)){
-                        // debugger;
-                        let li=createTag('li');
-                        li.setAttribute('class','product-exist')
-                        li.addEventListener('click',populateRow);
-                        // li.dataset.currentRow=e.target.parentNode.parentNode;
-                        li.dataset.id=product.id;
-                        li.dataset.img=product.img_url;
-                        li.dataset.name=product.name;
-                        li.dataset.size=product.size;
-                        li.dataset.barcode=product.barcode;
-                        li.dataset.brand=product.brand;
-                        li.dataset.category_type=product.category_type;
-                        li.innerHTML=`<img width="30px" height="25px" src=${product.img_url}>  Name:${product.name}   Barcode:${product.barcode}`
-                        ul.append(li);
+            let currentRow=eve.target.parentNode.parentNode;
+            let id=currentRow.id;
+            // console.log(currentRow.data-vpid);
+            let vpid=currentRow.dataset.vpid;
+            console.log(vpid);
+            currentRowChilds=currentRow.childNodes;
+
+            let updateItems={};
+            let vpUpdateObj={};
+            // console.log(currentRowChilds);
+            currentRowChilds.forEach((td,i) => {
+                if(i!==8 && i!==0){
+                    td.innerText=td.firstChild.value;
+                    // console.log(td.getAttribute("name"));
+                    let key=td.getAttribute("name");
+                    if(key==='v_item' || key==='case_price'){
+                        vpUpdateObj[key]=td.innerText;
+                    }else{
+
+                        updateItems[key]=td.innerText;
+                    }
+                    // td.firstChild.remove();
+                }
+            })
+            // console.log(updateItems);
+            // console.log(vpUpdateObj);
+            eve.target.style.display='none';//hide the update button
+            eve.target.previousElementSibling.style.display='inline';//display edit button
+
+            //fectch update--product
+            fetch(`http://localhost:3000/api/v1/products/${id}`,{
+                method: 'PATCH',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify(updateItems)
+            })
+
+            //complete fetch update--product
+
+
+            //fetch update ---vendor_products for price and v_item
+            
+            fetch(`http://localhost:3000/api/v1/vendor_products/${vpid}`,{
+                method: 'PATCH',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify(vpUpdateObj)
+            })
+            //end of vendor_products update
+
+        }
+
+    }
+
+    function getProdNvenProdAttrs(){
+        let attrs=["img_url", "name", "size", "barcode", "brand", "category_id", "v_item", "case_price"];
+        return attrs;
+    }
+
+    function getProdOnlyAttrs(){
+        let attrs=["img_url", "name", "size", "barcode", "brand", "case_pack", "category_id"];
+        return attrs;
+    }
+
+
+    function addNewItem(){
+        let row=tableProduct.insertRow();
+        row.style.height="50px";
+        
+        getProdNvenProdAttrs().forEach(function(attr, i){
+            let cell=row.insertCell();
+
+            if(i!==9){
+                let input=createTag('input');
+                input.setAttribute('type', 'text');
+                input.setAttribute('class','input-cell')
+                input.setAttribute('name',attr)
+                cell.append(input);
+            }
+        })
+
+        let actionCell=row.insertCell();
+        if (requiredFields()!==""){         //requiredFields functions not implemented yet
+            let addBtn=createTag('button')
+            addBtn.innerText='Add';
+            addBtn.setAttribute('id','add-item')
+            actionCell.append(addBtn);
+        }
+    }
+
+
+    function requiredFields(){//need to implement this functionality, check if the fields are actually empty
+        return false;
+    }
+
+
+    function getEditBox(){
+        let inputPrice=createTag('input');
+        // inputPrice.setAttribute('name','editPrice')
+        inputPrice.style.width="60px";
+        inputPrice.style.height="30px";
+        
+        return inputPrice;
+    }
+
+
+
+    function highlightItemNumAndPrice(e){
+        alert("Other vendors also stock this product. So, full edit is not available. Editable cells will be highlighted.")
+        let price=e.target.parentNode.previousElementSibling;
+        // debugger;
+        let editPrice=getEditBox();
+        editPrice.setAttribute('name','editPrice');
+        editPrice.setAttribute('class','edit-cell')
+        editPrice.value=price.innerText;
+        // console.log(editPrice.value);
+        price.innerText="";
+        price.append(editPrice);
+
+        let vItem=price.previousElementSibling;
+        let inputItemNum=getEditBox();
+        inputItemNum.setAttribute('name','editItem')
+        inputItemNum.setAttribute('class','edit-cell')
+        inputItemNum.value=vItem.innerText;
+        vItem.innerText="";
+        vItem.append(inputItemNum);
+
+        e.target.style.display='none';//hide the edit button and display update button
+        e.target.nextElementSibling.nextElementSibling.style.display="inline"; //display update P&I button
+        
+
+    }
+
+    function updatePriceAndItemNum(e){
+            let currentRow=e.target.parentNode.parentNode;
+            let tdPrice=e.target.parentNode.previousElementSibling;
+            let tdVitem=tdPrice.previousElementSibling;
+            let newPrice=document.getElementsByName('editPrice')[0];
+            let newItemNum=document.getElementsByName('editItem')[0];
+            
+            let vpid=currentRow.dataset.vpid;
+            let vpUpdateObj={v_item:newItemNum.value, case_price:newPrice.value};
+            tdPrice.innerText=newPrice.value;
+            tdVitem.innerText=newItemNum.value;
+            newPrice.remove();
+            newItemNum.remove();
+            
+            e.target.style.display='none';//hide the update P&I button
+            e.target.previousElementSibling.previousElementSibling.style.display='inline';//display edit button
+
+            //fetch update ---vendor_products for price and v_item
+            
+            fetch(`http://localhost:3000/api/v1/vendor_products/${vpid}`,{
+                method: 'PATCH',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify(vpUpdateObj)
+            })
+            //end of vendor_products update
+
+        
+
+    }
+
+    //separate function to get all products---begin
+
+    async function getAllProducts () {
+        try {
+        const resp = await fetch(baseUrl+'products')
+        //   console.log(resp)
+        return resp.json();
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+
+
+    function lookupProductForBarcode(e,allProducts){
+        let userUpc=e.target.value
+
+        //On below line, .filter methods remove the null value from the array since map returns undefined for not found item
+        let vendorProductsIds=Array.from(tableProduct.rows).map((row)=>Number(row.id)).filter(i=>i);
+        console.log(vendorProductsIds);
+        // console.log(tableProduct.rows);
+
+        if(!userUpc){
+            divVendorInfo.firstChild.nextElementSibling.remove();
+            return;
+        }
+    
+                
+                if(divVendorInfo.firstChild.nextElementSibling){
+                    divVendorInfo.firstChild.nextElementSibling.remove();
+                }
+                
+                let itemSelectDiv=createTag('div');
+                let ul=createTag('ul');
+                for(let product of allProducts){
+                    let strBarcode=product.barcode.toString();
+                    // console.log(product);
+                    // console.log(typeof(product.barcode));
+                    if(strBarcode.startsWith(userUpc)){
+                        itemSelectDiv.setAttribute('id', 'item-found');
+                        itemSelectDiv.setAttribute('class', 'block');
+                        itemSelectDiv.style.display='inline-block';
+                        
+                        //do not create li for the items that this vendor already stock
+                        if(!vendorProductsIds.includes(product.id)){
+                            // debugger;
+                            let li=createTag('li');
+                            li.setAttribute('class','product-exist')
+                            li.addEventListener('click',populateRow);
+                            // li.dataset.currentRow=e.target.parentNode.parentNode;
+                            li.dataset.id=product.id;
+                            li.dataset.img=product.img_url;
+                            li.dataset.name=product.name;
+                            li.dataset.size=product.size;
+                            li.dataset.barcode=product.barcode;
+                            li.dataset.brand=product.brand;
+                            li.dataset.category_type=product.category_type;
+                            li.innerHTML=`<img width="30px" height="25px" src=${product.img_url}>  Name:${product.name}   Barcode:${product.barcode}`
+                            ul.append(li);
+                        }
                     }
                 }
-            }
-            itemSelectDiv.append(ul);
-            divVendorInfo.append(itemSelectDiv);
-        
-    // })
+                itemSelectDiv.append(ul);
+                divVendorInfo.append(itemSelectDiv);
+            
+        // })
 
-}
-
-function populateRow(){
-    let row=document.getElementsByClassName('input-cell');
-
-    let addBtn=document.getElementById('add-item');
-    addBtn.dataset.item='exist';
-    addBtn.dataset.id=this.dataset.id;
-    // console.log(row);
-    for(let cell of row){
-        if(cell.name==='img_url'){
-            cell.value=this.dataset.img;
-        }else if(cell.name==='name'){
-            cell.value=this.dataset.name;
-        }else if(cell.name==='barcode'){
-            cell.value=this.dataset.barcode;
-        }else if(cell.name==='size'){
-            cell.value=this.dataset.size;
-        }else if(cell.name==='brand'){
-            cell.value=this.dataset.brand;
-        }else if(cell.name==='category_id'){
-            cell.value=this.dataset.category_type;
-        }
     }
 
-}
+    function populateRow(){
+        let row=document.getElementsByClassName('input-cell');
 
-
-function fieldsRequired(){
-    let attrs=["name", "size", "barcode", "case_price"];
-    return attrs;
-}
-
-
-
-function addNewProduct(e){
-    let rowCells=getCurrentRowChilds(e);
-    let requiredCellsEmpty=false;
-    let productExist=false;
-
-    //new added
-    let vendorPrice;
-    let vItem;
-
-
-    //check if the required fields are empty
-    for(let cell of rowCells){
-        if(fieldsRequired().includes(cell.firstChild.name) && cell.firstChild.value===''){
-            cell.firstChild.style.backgroundColor="#ff8080";
-            errorMsg.style.display='block';
-            requiredCellsEmpty=true;
+        let addBtn=document.getElementById('add-item');
+        addBtn.dataset.item='exist';
+        addBtn.dataset.id=this.dataset.id;
+        // console.log(row);
+        for(let cell of row){
+            if(cell.name==='img_url'){
+                cell.value=this.dataset.img;
+            }else if(cell.name==='name'){
+                cell.value=this.dataset.name;
+            }else if(cell.name==='barcode'){
+                cell.value=this.dataset.barcode;
+            }else if(cell.name==='size'){
+                cell.value=this.dataset.size;
+            }else if(cell.name==='brand'){
+                cell.value=this.dataset.brand;
+            }else if(cell.name==='category_id'){
+                cell.value=this.dataset.category_type;
+            }
         }
 
-        if(cell.firstChild.name=='case_price' && cell.firstChild.value!==''){
-            vendorPrice=cell.firstChild.value;
-        }
-        
-        if(cell.firstChild.name==='v_item'){
-            vItem=cell.firstChild.value;
-        }
     }
 
-    if(!requiredCellsEmpty){
-        // debugger;
 
-        //if add button's dataset item value is 'exist' do fetch post to vp table
-        if(e.target.dataset.item==='exist'){
+    function fieldsRequired(){
+        let attrs=["name", "size", "barcode", "case_price"];
+        return attrs;
+    }
 
-            //set td innerText to the values of input boxes and remove the inputboxes
-            for(let cell of rowCells){
-                
-                console.log(cell);
-                if(cell.firstChild.name==='img_url'){
-                    cell.innerHTML=`<img class="table-img" src=${cell.firstChild.value} width="30px" height="25px">`;
-                }else{
-                cell.innerText=cell.firstChild.value;
-                }
-                // cell.firstChild.remove();
+
+
+    function addNewProduct(e){
+        let rowCells=getCurrentRowChilds(e);
+        let requiredCellsEmpty=false;
+        let productExist=false;
+
+        //new added
+        let vendorPrice;
+        let vItem;
+
+
+        //check if the required fields are empty
+        for(let cell of rowCells){
+            if(fieldsRequired().includes(cell.firstChild.name) && cell.firstChild.value===''){
+                cell.firstChild.style.backgroundColor="#ff8080";
+                errorMsg.style.display='block';
+                requiredCellsEmpty=true;
             }
 
-            fetch(`${baseUrl}vendor_products`, {
-                method: 'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({
-                    v_item:vItem,
-                    // e.target.parentNode.previousElementSibling.previousElementSibling.firstChild.value;
-                    case_price:vendorPrice,
-                    product_id:e.target.dataset.id,
-                    vendor_id:vendorId
-                })
-            })
-        }else{
-
-        //check if the product is existing product
-        //if product already exists, fetch post to vendor_products table
-        //if product is not existing product, fetch post both products and vendor_products tables
-        getAllProducts().then((data)=>{
-            let productObj={};
-            let vpObj={};
-
-            //collect user inputs from cells and build product and vp objects
-            for(let cellData of rowCells){
-
-                if(getProdOnlyAttrs().includes(cellData.firstChild.name)){
-                    productObj[cellData.firstChild.name]=cellData.firstChild.value;
-                }else{
-                    vpObj[cellData.firstChild.name]=cellData.firstChild.value;
-                }
+            if(cell.firstChild.name=='case_price' && cell.firstChild.value!==''){
+                vendorPrice=cell.firstChild.value;
             }
             
-            //Once objects are build, check if the user entered product is a pre-existing product
-            //if pre-exist, FETCH POST vp tables
-            for(let product of data){
-                if (product.barcode===productObj.barcode){
-                    //prepare vpObj for post method
-                    vpObj.product_id=product.id;
-                    vpObj.vendor_id=vendorId;
+            if(cell.firstChild.name==='v_item'){
+                vItem=cell.firstChild.value;
+            }
+        }
 
-                    //fetch post only to vendor_products table
-                    fetch(`${baseUrl}vendor_products`, {
-                        method: 'POST',
-                        headers:{'Content-Type':'application/json'},
-                        body:JSON.stringify(vpObj)
-                    })
+        if(!requiredCellsEmpty){
+            // debugger;
 
-                    productExist=true;     
-                    break;
+            //if add button's dataset item value is 'exist' do fetch post to vp table
+            if(e.target.dataset.item==='exist'){
+
+                //set td innerText to the values of input boxes and remove the inputboxes
+                for(let cell of rowCells){
+                    
+                    console.log(cell);
+                    if(cell.firstChild.name==='img_url'){
+                        cell.innerHTML=`<img class="table-img" src=${cell.firstChild.value} width="30px" height="25px">`;
+                    }else{
+                    cell.innerText=cell.firstChild.value;
+                    }
+                    // cell.firstChild.remove();
                 }
 
-            
-            }
-
-            // Product does not exist - fetch post to both products and vp tables
-            if(!productExist){
-
-                // console.log(productObj);
-                // //POST products table
-                // fetch(`${baseUrl}products`, {
-                //     method: 'POST',
-                //     headers:{'Content-Type':'application/json'},
-                //     body:JSON.stringify(productObj)
-                // }).then(function(res){
-                //     if(!res.ok){
-                //         throw Error(res.statusText);
-                //     }
-                //     console.log(res);
-                // }).catch(function(error){
-                //     alert('The following error has occurred: \n', error);
-                // })
-                let postObj={
+                fetch(`${baseUrl}vendor_products`, {
                     method: 'POST',
                     headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify(productObj)
-                }
+                    body:JSON.stringify({
+                        v_item:vItem,
+                        // e.target.parentNode.previousElementSibling.previousElementSibling.firstChild.value;
+                        case_price:vendorPrice,
+                        product_id:e.target.dataset.id,
+                        vendor_id:vendorId
+                    })
+                })
+            }else{
 
-                fetchPostData(baseUrl+'products', postObj)
-                    .then((productPosted)=>{
-                        console.log(productPosted);
-                        vpObj.product_id=productPosted.id;
+            //check if the product is existing product
+            //if product already exists, fetch post to vendor_products table
+            //if product is not existing product, fetch post both products and vendor_products tables
+            getAllProducts().then((data)=>{
+                let productObj={};
+                let vpObj={};
+
+                //collect user inputs from cells and build product and vp objects
+                for(let cellData of rowCells){
+
+                    if(getProdOnlyAttrs().includes(cellData.firstChild.name)){
+                        productObj[cellData.firstChild.name]=cellData.firstChild.value;
+                    }else{
+                        vpObj[cellData.firstChild.name]=cellData.firstChild.value;
+                    }
+                }
+                
+                //Once objects are build, check if the user entered product is a pre-existing product
+                //if pre-exist, FETCH POST vp tables
+                for(let product of data){
+                    if (product.barcode===productObj.barcode){
+                        //prepare vpObj for post method
+                        vpObj.product_id=product.id;
                         vpObj.vendor_id=vendorId;
+
+                        //fetch post only to vendor_products table
                         fetch(`${baseUrl}vendor_products`, {
                             method: 'POST',
                             headers:{'Content-Type':'application/json'},
                             body:JSON.stringify(vpObj)
-                        }).then((res)=>{
-                            console.log(res);
                         })
-                    })
-                  
-                // function postVp(justAddedProd){
-                // console.log(data.length);
-                 //this will assign the next number after the length of all products but this does not work if 'delete' function
-                //                                 // is implemented
-                
-                // console.log("entering vp post");
-                // console.log(vpObj);
 
-                //POST vendor_products table
-                
+                        productExist=true;     
+                        break;
+                    }
 
-            }
-            
-        })
+                
+                }
+
+                // Product does not exist - fetch post to both products and vp tables
+                if(!productExist){
+
+                    // console.log(productObj);
+                    // //POST products table
+                    // fetch(`${baseUrl}products`, {
+                    //     method: 'POST',
+                    //     headers:{'Content-Type':'application/json'},
+                    //     body:JSON.stringify(productObj)
+                    // }).then(function(res){
+                    //     if(!res.ok){
+                    //         throw Error(res.statusText);
+                    //     }
+                    //     console.log(res);
+                    // }).catch(function(error){
+                    //     alert('The following error has occurred: \n', error);
+                    // })
+                    let postObj={
+                        method: 'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify(productObj)
+                    }
+
+                    fetchPostData(baseUrl+'products', postObj)
+                        .then((productPosted)=>{
+                            console.log(productPosted);
+                            vpObj.product_id=productPosted.id;
+                            vpObj.vendor_id=vendorId;
+                            fetch(`${baseUrl}vendor_products`, {
+                                method: 'POST',
+                                headers:{'Content-Type':'application/json'},
+                                body:JSON.stringify(vpObj)
+                            }).then((res)=>{
+                                console.log(res);
+                            })
+                        })
+                    
+                    // function postVp(justAddedProd){
+                    // console.log(data.length);
+                    //this will assign the next number after the length of all products but this does not work if 'delete' function
+                    //                                 // is implemented
+                    
+                    // console.log("entering vp post");
+                    // console.log(vpObj);
+
+                    //POST vendor_products table
+                    
+
+                }
+                
+            })
+        }
+
+        }
     }
 
     }
-}
 
-}
-
-///////Vendor Js script ------- ends here ------------
+    ///////Vendor Js script ------- ends here ------------
 
 });

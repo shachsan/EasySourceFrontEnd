@@ -86,7 +86,7 @@
                               <span class="navbar-toggler-icon"></span>
                             </button>
                             <div class="collapse navbar-collapse" id="navbarNav">
-                              <ul class="navbar-nav" id="vendor-selection">
+                              <ul class="navbar-nav mr-auto" id="vendor-selection">
                                 
                                 <li class="nav-item active">
                                   <a class="nav-link" href="#">Search</a>
@@ -116,6 +116,11 @@
                                     <a class="nav-link" href="#">Order History</a>
                                 </li>
                               </ul>
+
+                              <span class="navbar-text">
+                                <a id="logoff" class="nav-link" href="#">Log Off</a>
+                              </span>
+                              
                             </div>
                     </nav>
             </div>
@@ -124,7 +129,7 @@
                 <div id="vendor-info" class="container">
 
                 </div>
-
+                <div class="new-item>"><button id="add-item-btn" class="btn btn-success">Add New Product</button></div>
                 <div id="all-product">
                     <table id="product-table">
                             <tr>
@@ -140,9 +145,10 @@
                             </tr>
                     </table>
                 </div>
+                <div id="match-product"></div>
                 <span class="error-msg" style="display:none">Hightlighted cells can not be empty.</span>
-                <button id="add-product" class="btn btn-success">Add New Product</button>
-
+                <div class="new-item"><button id="add-product" class="btn btn-success">Add New Product</button></div>
+                
             </div>
         </div>
     </div>

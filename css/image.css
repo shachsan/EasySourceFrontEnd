@@ -28,6 +28,8 @@
 
 #vendor-info{
     margin-left: 0px;
+    display: inline-block;
+    /* float: left; */
     /* width: 65%; */
 }
 
@@ -89,15 +91,23 @@ table {
 
   #flash{
     display: none;
-    position: absolute;
+    /* position: absolute; */
     background: yellow;
     text-align: center;
     width: 400px;
     height: 50px;
     z-index: 10;
+    padding: 10px 5px;
+    
 
-    top: 90%;
-    left: 40%;
+    /* top: 120vh;
+    left: 30vh; */
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+/* bring your own browser transform prefixes */
+    transform: translate(-50%, -50%);
     /* transform: translate(-50%, -50%); */
     /* top: 50%;
     left: 50%;
@@ -114,27 +124,43 @@ table {
     box-sizing: border-box;
   }
 
-  #add-product{
+#match-product{
+    display: inline;
+    width: 70%;
+}
+
+  .new-item{
       margin: 5px;
+      display: inline;
       float: right;
-      /* background-color: chartreuse; */
   }
 
-
-  #item-found{
+  /* #item-found{
       border: 5px solid rgb(255, 145, 0);
       margin: 5px;
       padding: 5px;
       width: 70%;
       
-  }
+  } */
 
   .block{
-      border: 5px solid rgb(255, 145, 0);
-      margin-right: 15px;
-      padding: 5px;
-      width: 25%;
-      box-shadow: 10px 10px grey;
+    border: 5px solid rgb(255, 145, 0);
+    margin-right: 15px;
+    padding: 5px;
+    width: 65%;
+    box-shadow: 10px 10px grey;
+
+
+    /* display: none;
+    position: absolute;
+    /* background: yellow; */
+    /* text-align: center;
+    width: 400px;
+    height: 50px;
+    z-index: 9;
+
+    top: 90%;
+    left: 30%; */ 
   }
 
   .container {
@@ -144,12 +170,18 @@ table {
     padding: 5px;
     position: relative;
     text-align:left;
+
   }
 
 
   .error-msg{
       background: lightgoldenrodyellow;
       text-align: center;
+      font-size: 1.2em;
+      padding: 5px;
+      
+
+
   }
 
   .edit-cell{

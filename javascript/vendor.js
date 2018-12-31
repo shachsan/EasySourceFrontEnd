@@ -8,6 +8,7 @@ $(function(){
     }
 
     document.getElementById('logoff').addEventListener('click', ()=>location.reload());
+    document.getElementById('logoff-buyer').addEventListener('click', ()=>location.reload());
 
     function fetchCategory(ele){
         const categorySelBox=createTag('select');
@@ -53,6 +54,8 @@ $(function(){
         $(".container").fadeIn();
     
     })
+
+    $("#login-type a").click(()=>location.reload());
 
     $(".login-form").submit(function(){
         event.preventDefault();

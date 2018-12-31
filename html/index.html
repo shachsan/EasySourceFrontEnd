@@ -30,7 +30,9 @@
 
       <div id="login-type">Please let us know who you are?<br>
         <button id="buyer" type="button" class="btn btn-outline-dark btn-lg">Buyer</button>
-        <button id="whlsr" type="button" class="btn btn-outline-dark btn-lg">Wholesale Vendor</button>
+        <button id="whlsr" type="button" class="btn btn-outline-dark btn-lg">Wholesale Vendor</button><br>
+        <a href="#" class="previous">&laquo; Back</a>
+        
       </div>
 
       <div style="display: none" class="container">
@@ -171,7 +173,7 @@
                           <span class="navbar-toggler-icon"></span>
                         </button>
                         <div class="collapse navbar-collapse" id="navbarNav">
-                          <ul class="navbar-nav" id="buyer-selection">
+                          <ul class="navbar-nav mr-auto" id="buyer-selection">
                             <li class="nav-item active">
                               <a class="nav-link" href="#">Barcode </a>
                               <input type="text" style="display:none" placeholder="Enter Barcode"/>
@@ -187,6 +189,9 @@
                               <a class="nav-link" href="#">Category</a>
                             </li>
                           </ul>
+                          <span class="navbar-text">
+                              <a id="logoff-buyer" class="nav-link" href="#">Log Off</a>
+                            </span>
                         </div>
                 </nav>
                     <!-- End of nav bar Search options -->

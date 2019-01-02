@@ -273,18 +273,49 @@ function showVendorDetail(vendorDetail){
         
         ul.style.display="inline-block";
         for(let key in vendor){
-            if(key !=='id' && key!=='vendor_id'){
+            // if(key !=='id' && key!=='vendor_id' && key!=='phone' && key!=='email'){
+            if(key ==='v_item' || key ==='vendor_name'){ 
                 let li=document.createElement('li');
                 li.innerHTML=`<p><strong>${key}</strong>:  ${vendor[key]}</p>`
                 ul.append(li);
             }
+
+            if(key==='case_price'){
+                let li=document.createElement('li');
+                li.innerHTML=`<p><strong>${key}</strong>:  $${vendor[key]}</p>`
+                ul.append(li);
+            }
+
         }
         const orderButton=document.createElement('button');
         orderButton.innerText="Order";
+        orderButton.dataset.phone=vendor.phone;
+        orderButton.dataset.email=vendor.email;
+        orderButton.setAttribute('class', 'btn btn-success')
+        orderButton.addEventListener('click',contactVendor);
         ul.append(orderButton);
         div.append(ul);
     }
     return div;
+}
+
+function contactVendor(){
+    let contactDiv=createTag('div');
+    contactDiv.setAttribute('id', 'contact');
+    contactDiv.innerHTML=`<p>Thank you for your interest on our product! Unfortunately, online `+
+                        `ordering is not available at this moment. However, you could reach out to`+
+                        `us at below contact for further inqueries</p><br>`+
+                        `<p>Phone:${this.dataset.phone}</p>`+
+                        `<p>Email:${this.dataset.email}</p>`
+    contactBtn=createTag('button');
+    contactBtn.style.backgroundColor='red';
+    contactBtn.innerText='Close';
+    $(contactBtn).click((e)=>{
+        console.log(e.target);
+        e.target.parentNode.remove()});
+    contactDiv.append(contactBtn);
+    divDisplaySelection.append(contactDiv);
+    contactDiv.style.display='block';
 }
 
 

@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="../javascript/jquery-3.3.1.js"></script>
+    <!-- <script src="../javascript/jquery-3.3.1.js"></script> -->
 
     <!-- for login-form start -->
     <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
@@ -18,7 +18,7 @@
 
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="../css/image.css">
+    <link rel="stylesheet" type="text/css" href="../css/all-pages.css">
     <title>Document</title>
 </head>
 <body>
@@ -99,16 +99,17 @@
                                 
                                 <li class="nav-item">
                                   <a class="nav-link" href="#">Barcode </a>
-                                  <input type="text" style="display:none" placeholder="Enter Barcode"/>
+                                  <input class="search-input" type="text" style="display:none" placeholder="Enter Barcode"/>
                                 </li>
                                 
                                 <li class="nav-item">
                                   <a class="nav-link" href="#">Name</a>
-                                  <input type="text" style="display:none" placeholder="Enter Name"/>
+                                  <input class="search-input" type="text" style="display:none" placeholder="Enter Name"/>
                                 </li>
 
                                 <li class="nav-item">
                                   <a class="nav-link" href="#">Category</a>
+                                  <!-- <select id=""></select> -->
                                 </li>
 <!--                                 
                                 <li class="nav-item">
@@ -180,17 +181,19 @@
                           <ul class="navbar-nav mr-auto" id="buyer-selection">
                             <li class="nav-item active">
                               <a class="nav-link" href="#">Barcode </a>
-                              <input type="text" style="display:none" placeholder="Enter Barcode"/>
+                              <input class="search-input" type="text" style="display:none" placeholder="Enter Barcode"/>
                             </li>
                             <li class="nav-item">
                               <a class="nav-link" href="#">Name</a>
-                              <input type="text" style="display:none" placeholder="Enter Name"/>
+                              <input class="search-input" type="text" style="display:none" placeholder="Enter Name"/>
                             </li>
                             <li class="nav-item">
                               <a class="nav-link" href="#">Vendor</a>
+                              <select class="selbox filter" id="vendor-selbox" style="display:none"></select>
                             </li>
                             <li class="nav-item">
                               <a class="nav-link" href="#">Category</a>
+                              <select class="selbox filter" id="category-selbox" style="display:none"></select>
                             </li>
                           </ul>
                           <span class="navbar-text">

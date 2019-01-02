@@ -11,8 +11,9 @@ $(function(){
     document.getElementById('logoff').addEventListener('click', ()=>location.reload());
     document.getElementById('logoff-buyer').addEventListener('click', ()=>location.reload());
 
-    function fetchCategory(ele){
-        const categorySelBox=createTag('select');
+    function fetchCategory(selectCatBox){
+        // const categorySelBox=createTag('select');
+        // categorySelBox.setAttribute('class','filter');
         fetch('http://localhost:3000/api/v1/categories')
             .then(res => res.json())
             .then((cats)=>{
@@ -20,13 +21,13 @@ $(function(){
                         const option=createTag('option');
                         option.value = cat.main_cat;
                         option.innerText = cat.main_cat;
-                        categorySelBox.append(option);
+                        selectCatBox.append(option);
                     }
-                    ele.parentNode.append(categorySelBox);
-                    $(ele).fadeIn();
+                    // ele.parentNode.append(categorySelBox);
+                    // $(ele).fadeIn();
                 })
                 
-                return categorySelBox;
+                // return categorySelBox;
      
     }
     
@@ -170,58 +171,83 @@ function loadBuyerScript(buyer){
 
 // function processSelection(e){
     $("#buyer-selection").click(function(e){
-        
-    if (e.target.innerText==="Barcode"){
-        const inputBarcode=e.target.nextElementSibling
-        $(inputBarcode).toggle('slow', ()=>{
-            inputBarcode.value='';
-            inputBarcode.addEventListener('keyup', searchByBarcode)
-        });
 
-    }else if (e.target.innerText==="Name"){
-        const inputName=e.target.nextElementSibling
-        $(inputName).toggle(800);
-        inputName.addEventListener('keyup', searchByName)
-    }else if (e.target.innerText==="Vendor"){
-        if (e.target.nextElementSibling){
-            e.target.nextElementSibling.remove();
-        }else{
-            fetchVendors(e.target);
+        
+        if (e.target.innerText==="Barcode"){
+            const inputBarcode=e.target.nextElementSibling
+            $(".search-input").not(inputBarcode).fadeOut('slow');
+            $(inputBarcode).toggle('slow', ()=>{
+                inputBarcode.value='';
+                inputBarcode.addEventListener('keyup', searchByBarcode)
+            });
+
+        }else if (e.target.innerText==="Name"){
+            const inputName=e.target.nextElementSibling
+            $(".search-input").not(inputName).fadeOut('slow');
+            $(inputName).toggle(800);
+            inputName.addEventListener('keyup', searchByName)
+        }else if (e.target.innerText==="Vendor"){
+            $(".search-input").fadeOut('slow');
+            const selectVenBox=e.target.nextElementSibling
+            $(selectVenBox).empty();
+            // if (e.target.nextElementSibling){
+            //     e.target.nextElementSibling.remove();
+            // }else{
+                $(selectVenBox).toggle(800);
+                fetchVendors(selectVenBox);
+                selectVenBox. addEventListener('change', filterByVendor);
+            // }
+        }else if (e.target.innerText==="Category"){
+            const selectCatBox=e.target.nextElementSibling
+            $(selectCatBox).empty();
+            $(".search-input").fadeOut('slow');
+            // if (e.target.nextElementSibling){
+            //     e.target.nextElementSibling.remove();
+            // }else{
+                $(selectCatBox).toggle(100);
+                fetchCategory(selectCatBox);
+                selectCatBox.addEventListener('change', searchByCategory);
+            // }
         }
-    }else if (e.target.innerText==="Category"){
-        if (e.target.nextElementSibling){
-            e.target.nextElementSibling.remove();
-        }else{
-            let selectBox=fetchCategory(e.target);
-            selectBox.addEventListener('change', searchByCategory);
-        }
-    }
 })
 
 
 
-function fetchVendors(ele){ //ele is current target element. It is passed when clicked on search by vendor and it will be passed to createVendorSelectBox 
+function fetchVendors(selectVenBox){ //ele is current target element. It is passed when clicked on search by vendor and it will be passed to createVendorSelectBox 
                             //function so that the select box can be appended into it.
+    // const vendorSelBox=createTag('select');
+    // vendorSelBox.setAttribute('class','filter');
     fetch('http://localhost:3000/api/v1/vendors')
         .then(res => res.json())
-        .then(vendors => createVendorSelectBox(vendors, ele));
- 
+        .then((vendors) => {
+            for(let vendor of vendors){
+                const option=document.createElement('option');
+                option.value = vendor.name;
+                option.innerText = vendor.name;
+                selectVenBox.append(option);
+            }
+        // ele.parentNode.append(vendorSelBox);
+        // $(ele).fadeIn();
+    });
+        // createVendorSelectBox(vendors, ele));
+    // return vendorSelBox;
 }
 
 
-function createVendorSelectBox(vendors, ele){
-    const vendorSelBox=document.createElement('select');
-    for(let vendor of vendors){
-        const option=document.createElement('option');
-        option.value = vendor.name;
-        option.innerText = vendor.name;
-        vendorSelBox.append(option);
-    }
-    ele.parentNode.append(vendorSelBox);
-    // ele.style.display='inline';
-    $(ele).fadeIn('slow');
-    vendorSelBox.addEventListener('change', searchByVendor)
-}
+// function createVendorSelectBox(vendors, ele){
+//     const vendorSelBox=createTag('select');
+//     vendorSelBox.setAttribute('class','filter');
+//     for(let vendor of vendors){
+//         const option=document.createElement('option');
+//         option.value = vendor.name;
+//         option.innerText = vendor.name;
+//         vendorSelBox.append(option);
+//     }
+//     ele.parentNode.append(vendorSelBox);
+//     // ele.style.display='inline';
+//     $(ele).fadeIn('slow');
+//     vendorSelBox.addEventListener('change', searchByVendor)
+// }
 
 
 
@@ -358,20 +384,34 @@ function searchByName(e){
 
 ///Search By Vendor
 
-function searchByVendor(e){
+function filterByVendor(e){
     let vendor=e.target.value;
-    const ulVendors=document.querySelectorAll(`[name="${true}"]`);
-    ulVendors.forEach(function(ulVendor){
-        let parentDiv=ulVendor.parentNode.parentNode
-        if(ulVendor.getAttribute('name')===vendor){
-            parentDiv.style.display='block';
-        }else{
-            console.log(ulVendor.name);
-            console.log(vendor);
+    const divVendors=document.querySelectorAll(".vendor-list-div");
+    console.log(divVendors);
+    console.log("vendor", vendor);
+    for(divVendor of divVendors){
+        // console.log(ulVendor);
+        let parentDiv=divVendor.parentNode;
+
+        let noMatch=false;
+        console.log(divVendor);
+        for(ulVendor of divVendor.childNodes){
+            console.log(ulVendor);
+            if(ulVendor.getAttribute('name')===vendor){
+                console.log("Inside if statement:", ulVendor.getAttribute('name'));
+                parentDiv.style.display='block';
+                noMatch=true;
+                break;
+            }
+      
+        }
+        
+        if(!noMatch){
             parentDiv.style.display='none';
+
         }
 
-    })
+    }
 }
 
 //Search By Category

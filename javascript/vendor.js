@@ -29,11 +29,6 @@ $(function(){
      
     }
     
-    // function createCategorySelectBox(cats, ele){
-    //     // ele.style.display='inline';
-        
-    //     // categorySelBox.addEventListener('change', searchByCategory);
-    // }
 
     /////login Js script -------start here ----------
     $("#login-button").click(function(){
@@ -160,8 +155,6 @@ $(function(){
 
 function loadBuyerScript(){
     //from buyers page
-    // const ulBuyerSelector = document.getElementById("buyer-selection");
-    // ulBuyerSelector.addEventListener('click', processSelection);
     const divDisplaySelection = document.getElementById("option-selected");
 
 
@@ -173,17 +166,14 @@ function loadBuyerScript(){
     $("#buyer-selection").click(function(e){
         
     if (e.target.innerText==="Barcode"){
-        // debugger;
         const inputBarcode=e.target.nextElementSibling
         $(inputBarcode).toggle('slow', ()=>{
             inputBarcode.value='';
             inputBarcode.addEventListener('keyup', searchByBarcode)
         });
-        // inputBarcode.style.display="inline";
 
     }else if (e.target.innerText==="Name"){
         const inputName=e.target.nextElementSibling
-        // inputName.style.display="inline";
         $(inputName).toggle(800);
         inputName.addEventListener('keyup', searchByName)
     }else if (e.target.innerText==="Vendor"){
@@ -227,26 +217,6 @@ function createVendorSelectBox(vendors, ele){
     vendorSelBox.addEventListener('change', searchByVendor)
 }
 
-// function fetchCategory(ele){
-//     fetch('http://localhost:3000/api/v1/categories')
-//         .then(res => res.json())
-//         .then(cats => createCategorySelectBox(cats, ele));
- 
-// }
-
-// function createCategorySelectBox(cats, ele){
-//     const categorySelBox=createTag('select');
-//     for(let cat of cats){
-//         const option=document.createElement('option');
-//         option.value = cat.main_cat;
-//         option.innerText = cat.main_cat;
-//         categorySelBox.append(option);
-//     }
-//     ele.parentNode.append(categorySelBox);
-//     // ele.style.display='inline';
-//     $(ele).fadeIn();
-//     categorySelBox.addEventListener('change', searchByCategory);
-// }
 
 
 function showAllProducts(products){
@@ -290,10 +260,6 @@ function showAllProducts(products){
     divDisplaySelection.append(divProduct);
     divDisplaySelection.style.display = "block";
     
-    //store fresh array of dom elements for search function
-        // spanCats=document.querySelectorAll('.category_type');   
-        // console.log(spanCats); 
-
 }
 
 
@@ -302,7 +268,6 @@ function showVendorDetail(vendorDetail){
     div.setAttribute('class', 'vendor-list-div')
     for(let vendor of vendorDetail){
         const ul=document.createElement('ul');
-        // debugger;
         ul.setAttribute('name', vendor.vendor_name)
         ul.setAttribute('class', 'vendor')
         
@@ -319,7 +284,6 @@ function showVendorDetail(vendorDetail){
         ul.append(orderButton);
         div.append(ul);
     }
-    // console.log(div.hasChildNodes());
     return div;
 }
 
@@ -329,7 +293,6 @@ function searchByBarcode(e){
     let searchBarcode=e.target.value;
     let spanBarcodes=document.querySelectorAll(".barcode");
     spanBarcodes.forEach(function(spanBar){
-        // debugger;
         let parentDiv=spanBar.parentNode.parentNode.parentNode.parentNode.parentNode;
         if(spanBar.innerText.trim().startsWith(searchBarcode)){
             parentDiv.style.display='block';
@@ -360,16 +323,11 @@ function searchByName(e){
 
 function searchByVendor(e){
     let vendor=e.target.value;
-    // const ulVendors=document.querySelectorAll('.vendor');
     const ulVendors=document.querySelectorAll(`[name="${true}"]`);
-    console.log(ulVendors);
     ulVendors.forEach(function(ulVendor){
         let parentDiv=ulVendor.parentNode.parentNode
         if(ulVendor.getAttribute('name')===vendor){
-            console.log(ulVendor.name);
-            console.log(vendor);
             parentDiv.style.display='block';
-            // console.log(parentDiv);
         }else{
             console.log(ulVendor.name);
             console.log(vendor);
@@ -409,7 +367,6 @@ function searchByCategory(e){
 function loadVendorScript(){
     //from vendors page
     const divMain=document.getElementsByName('main')[0];
-    // console.log(divMain);
     const navDiv=document.getElementById('nav-div');
     const divVendorInfo = document.getElementById('vendor-info');
     const divProductDetail=document.getElementById('all-product');
@@ -418,11 +375,12 @@ function loadVendorScript(){
     const errorMsg=document.getElementsByClassName('error-msg')[0];
     const vendorContainerDiv=document.getElementById('vendor');
     const divMatchProduct=document.getElementById('match-product');
-    // let row;
-    // console.log(tableProduct);
+    const myProducts=document.getElementById('my-prod');
+    
     tableProduct.addEventListener('dblclick', tableAction);
     tableProduct.addEventListener('click', tableActionOnSingleClick);
     buttonAddNewBtn.addEventListener('click', addNewItem);
+    myProducts.addEventListener('click', resetTable);
     document.getElementById('add-item-btn').addEventListener('click', addNewItem);
     //Base URL for api
     const baseUrl=`http://localhost:3000/api/v1/`;
@@ -436,17 +394,14 @@ function loadVendorScript(){
         $("#vendor-selection").click(function(e){
         
             if (e.target.innerText==="Barcode"){
-                // debugger;
                 const inputBarcode=e.target.nextElementSibling
                 $(inputBarcode).toggle('slow', ()=>{
                     inputBarcode.value='';
                     inputBarcode.addEventListener('keyup', updateTableByBarcode)
                 });
-                // inputBarcode.style.display="inline";
         
             }else if (e.target.innerText==="Name"){
                 const inputName=e.target.nextElementSibling
-                // inputName.style.display="inline";
                 $(inputName).toggle(800);
                 inputName.addEventListener('keyup', updateTableByName)
             
@@ -469,7 +424,6 @@ function updateTableByBarcode(e){
         let tableRows=tableProduct.rows;
         Array.from(tableRows).forEach(function(row){
             let tdBar=row.querySelector('[name="barcode"]');
-            console.log(tdBar);
             if(tdBar){
                 if(tdBar.innerText.trim().startsWith(searchBarcode)){
                     row.style.display='table-row';
@@ -486,7 +440,6 @@ function updateTableByName(e){
         const tableRows=tableProduct.rows;
         Array.from(tableRows).forEach(function(row){
             let tdName=row.querySelector('[name="name"]');
-            console.log(tdName);
             if(tdName){
                 
                 if(tdName.innerText.toLowerCase().includes(searchName.toLowerCase())){
@@ -503,7 +456,6 @@ function updateTableByCat(e){
         Array.from(tableRows).forEach(function(row){
             row.style.display="table-row";
             let tdCat=row.querySelector('[name="category_id"]');
-            console.log(tdCat);
             if(tdCat){
                 
                 if(tdCat.innerText.toLowerCase().includes(e.target.value.toLowerCase())){
@@ -545,10 +497,7 @@ function updateTableByCat(e){
             }
     }
 
-    //test code function called by test1
         function populateTable(data, product){
-            // console.log(data);
-            // for(let key in data){
             let row = tableProduct.insertRow();
             row.setAttribute('id',product.product_id);
             row.setAttribute('data-vpid', product.id);
@@ -590,7 +539,6 @@ function updateTableByCat(e){
             let editButton=createTag('button');
             editButton.setAttribute('class', 'item-action btn btn-primary');
             editButton.innerText="Edit";
-            // editButton.addEventListener('click', editItem);
 
             //Create Update to toggle with Edit button and set to display none once created
             //make it visible once Edit button is click
@@ -610,21 +558,22 @@ function updateTableByCat(e){
             let deleteBtn=document.createElement('button');
             deleteBtn.setAttribute('class', 'item-action btn btn-danger');
             deleteBtn.innerText="Delete";
-            // deleteBtn.addEventListener('click', deleteItem);
 
             cellAction.append(editButton);
             cellAction.append(updateButton);
             cellAction.append(updtBtnPriceNitem);
             cellAction.append(deleteBtn);
 
-            
-            
-        // }
     }
 
+//Show all products on the table
+    function resetTable(){
+        Array.from(tableProduct.rows).forEach(function(row){
+            row.style.display='table-row';
+        })
+    }
 
     function tableAction(eventDblClk){
-        console.log(eventDblClk.target);
         let targetEle=eventDblClk.target;
         let editCell=createTag('input');
         editCell.value=eventDblClk.target.innerText;
@@ -653,12 +602,9 @@ function updateTableByCat(e){
             eventSingleClk.target.style.backgroundColor='transparent';
             errorMsg.style.display='none';
         }
-        console.log(eventSingleClk.target.name);
 
         if(eventSingleClk.target.name==='barcode'){
-            // console.log("barcode filled is click");
             getAllProducts().then((allProducts)=>{//added new line
-                // console.log((allProducts));
                 eventSingleClk.target.addEventListener('keyup', function(e){
                     lookupProductForBarcode(e, allProducts)
                 });
@@ -671,7 +617,6 @@ function updateTableByCat(e){
         }
 
         if(eventSingleClk.target.name==='updatePnI'){
-            // console.log("Update button P&I click");
             updatePriceAndItemNum(eventSingleClk);
 
         }
@@ -703,10 +648,8 @@ function updateTableByCat(e){
         // let currentRow=event.target.parentNode.parentNode;
         let currentRow=event.target.parentNode.parentNode;
         let vpId=currentRow.dataset.vpid;
-        // $(currentRow).slideUp(500).delay(800);
         currentRow.style.backgroundColor='red';
         $(currentRow).fadeOut(1000);
-        // currentRow.remove();
         
         fetch(baseUrl+`vendor_products/${vpId}`,{
             method: 'DELETE'  
@@ -745,13 +688,10 @@ function updateTableByCat(e){
     }
 
     function highlightEditableCells(e){
-        // console.log(e.bubbles);
         let currentTr=e.target.parentNode.parentNode;
         let currentTrChilds=currentTr.childNodes;
 
-        // console.log(currentTrChilds);
         currentTrChilds.forEach((td,i) => {
-            // console.log(i);
             if(i!==8 && i!==0){
             let editCell=createTag('input');
                 editCell.value=td.innerText;
@@ -771,25 +711,18 @@ function updateTableByCat(e){
         e.target.nextElementSibling.addEventListener('click', updateData);
 
         // Action when vendor clicks on 'update' button
-        // e is still is the event object passed when clicked on the table
-        // console.log(e.target);
         function updateData(eve){
-            // console.log(currentTrChilds);
             
             let currentRow=eve.target.parentNode.parentNode;
             let id=currentRow.id;
-            // console.log(currentRow.data-vpid);
             let vpid=currentRow.dataset.vpid;
-            console.log(vpid);
             currentRowChilds=currentRow.childNodes;
 
             let updateItems={};
             let vpUpdateObj={};
-            // console.log(currentRowChilds);
             currentRowChilds.forEach((td,i) => {
                 if(i!==8 && i!==0){
                     td.innerText=td.firstChild.value;
-                    // console.log(td.getAttribute("name"));
                     let key=td.getAttribute("name");
                     if(key==='v_item' || key==='case_price'){
                         vpUpdateObj[key]=td.innerText;
@@ -797,11 +730,8 @@ function updateTableByCat(e){
 
                         updateItems[key]=td.innerText;
                     }
-                    // td.firstChild.remove();
                 }
             })
-            // console.log(updateItems);
-            // console.log(vpUpdateObj);
             eve.target.style.display='none';//hide the update button
             eve.target.previousElementSibling.style.display='inline';//display edit button
 
@@ -874,7 +804,6 @@ function updateTableByCat(e){
 
     function getEditBox(){
         let inputPrice=createTag('input');
-        // inputPrice.setAttribute('name','editPrice')
         inputPrice.style.width="60px";
         inputPrice.style.height="30px";
         
@@ -886,12 +815,10 @@ function updateTableByCat(e){
     function highlightItemNumAndPrice(e){
         alert("Other vendors also stock this product. So, full edit is not available. Editable cells will be highlighted.")
         let price=e.target.parentNode.previousElementSibling;
-        // debugger;
         let editPrice=getEditBox();
         editPrice.setAttribute('name','editPrice');
         editPrice.setAttribute('class','edit-cell')
         editPrice.value=price.innerText;
-        // console.log(editPrice.value);
         price.innerText="";
         price.append(editPrice);
 
@@ -944,10 +871,8 @@ function updateTableByCat(e){
     async function getAllProducts () {
         try {
         const resp = await fetch(baseUrl+'products')
-        //   console.log(resp)
         return resp.json();
         } catch (err) {
-            console.log(err)
         }
     }
 
@@ -958,19 +883,15 @@ function updateTableByCat(e){
 
         //On below line, .filter methods remove the null value from the array since map returns undefined for not found item
         let vendorProductsIds=Array.from(tableProduct.rows).map((row)=>Number(row.id)).filter(i=>i);
-        console.log(vendorProductsIds);
-        // console.log(tableProduct.rows);
 
         if(!userUpc){
             divMatchProduct.firstChild.remove();
-            // divVendorInfo.firstChild.nextElementSibling.remove();
             return;
         }
     
                 
                 if(divMatchProduct.firstChild){
                     divMatchProduct.firstChild.remove();
-                    // divVendorInfo.firstChild.nextElementSibling.remove();
                 }
                 
                 let itemSelectDiv=createTag('div');
@@ -978,8 +899,6 @@ function updateTableByCat(e){
         
                 for(let product of allProducts){
                     let strBarcode=product.barcode.toString();
-                    // console.log(product);
-                    // console.log(typeof(product.barcode));
                     if(strBarcode.startsWith(userUpc)){
                         itemSelectDiv.setAttribute('id', 'item-found');
                         itemSelectDiv.setAttribute('class', 'block');
@@ -987,11 +906,9 @@ function updateTableByCat(e){
                         
                         //do not create li for the items that this vendor already stock
                         if(!vendorProductsIds.includes(product.id)){
-                            // debugger;
                             let li=createTag('li');
                             li.setAttribute('class','product-exist')
                             li.addEventListener('click',populateRow);
-                            // li.dataset.currentRow=e.target.parentNode.parentNode;
                             li.dataset.id=product.id;
                             li.dataset.img=product.img_url;
                             li.dataset.name=product.name;
@@ -1005,7 +922,6 @@ function updateTableByCat(e){
                     }
                 }
                 itemSelectDiv.append(ul);
-                // divVendorInfo.append(itemSelectDiv);
                 divMatchProduct.append(itemSelectDiv);
 
 
@@ -1020,7 +936,7 @@ function updateTableByCat(e){
         let addBtn=document.getElementById('add-item');
         addBtn.dataset.item='exist';
         addBtn.dataset.id=this.dataset.id;
-        // console.log(row);
+        
         for(let cell of row){
             if(cell.name==='img_url'){
                 cell.value=this.dataset.img;
@@ -1046,7 +962,6 @@ function updateTableByCat(e){
     }
 
     function getCrudBtns(actionCell){
-        // console.log(e.target.previousElementSibling);
                 // These lines of codes are for bringing Edit and Delet buttons after user clicks on button
                 //Need to refactor because these are repeating
                 let editButton=createTag('button');
@@ -1084,7 +999,6 @@ function updateTableByCat(e){
     function addNewProduct(e){
         let currentTr=e.target.parentNode.parentNode;
         let rowCells=currentTr.childNodes;
-        // let rowCells=getCurrentRowChilds(e);
         let requiredCellsEmpty=false;
         let productExist=false;
 
@@ -1124,7 +1038,6 @@ function updateTableByCat(e){
                     }else{
                     cell.innerText=cell.firstChild.value;
                     }
-                    // cell.firstChild.remove();
                 }
 
                 fetch(`${baseUrl}vendor_products`, {
@@ -1132,53 +1045,24 @@ function updateTableByCat(e){
                     headers:{'Content-Type':'application/json'},
                     body:JSON.stringify({
                         v_item:vItem,
-                        // e.target.parentNode.previousElementSibling.previousElementSibling.firstChild.value;
                         case_price:vendorPrice,
                         product_id:e.target.dataset.id,
                         vendor_id:vendorId
                     })
                 }).then(res=>res.json())
                   .then((res)=>{
-                    console.log(currentTr);
-                    currentTr.setAttribute('id',res.product.id);
+                      currentTr.setAttribute('id',res.product.id);
+                      currentTr.dataset.vpid=res.id;
                   })
 
                 //hide the item found div
                 $('#item-found').hide();
                 
-                // // console.log(e.target.previousElementSibling);
-                // // These lines of codes are for bringing Edit and Delet buttons after user clicks on button
-                // //Need to refactor because these are repeating
-                // let editButton=createTag('button');
-                // editButton.setAttribute('class', 'item-action btn btn-primary');
-                // editButton.innerText="Edit";
-                // // editButton.addEventListener('click', editItem);
-
-                // //Create Update to toggle with Edit button and set to display none once created
-                // //make it visible once Edit button is click
-                // let updateButton=document.createElement('button');
-                // updateButton.setAttribute('class', 'item-action btn btn-outline-success');
-                // updateButton.setAttribute('name', 'updateAll');
-                // updateButton.innerText="Update";
-                // updateButton.style.display='none';
-
-                // //Since the update button works differently, needed 2 update buttons
-                // let updtBtnPriceNitem=createTag('button');
-                // updtBtnPriceNitem.setAttribute('class', 'item-action btn btn-outline-success');
-                // updtBtnPriceNitem.setAttribute('name', 'updatePnI');
-                // updtBtnPriceNitem.innerText="Update";
-                // updtBtnPriceNitem.style.display='none';
-
-                // let deleteBtn=document.createElement('button');
-                // deleteBtn.setAttribute('class', 'item-action btn btn-danger');
-                // deleteBtn.innerText="Delete";
+               
 
                 let actionCell=rowCells[rowCells.length-1];
                 getCrudBtns(actionCell);
-                // actionCell.append(editButton);
-                // actionCell.append(updateButton);
-                // actionCell.append(updtBtnPriceNitem);
-                // actionCell.append(deleteBtn);
+                
 
             }else{
 

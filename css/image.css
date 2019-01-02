@@ -154,10 +154,18 @@ table {
     width: 70%;
 }
 
-  .new-item{
+  .new-item .my-products{
       margin: 5px;
-      display: inline;
-      float: right;
+      display: inline-block;
+    }
+    
+    .new-item{
+        float: right;
+        /* display: inline-block; */
+    }
+    
+    .my-products{
+      float: left;
   }
 
   /* #item-found{

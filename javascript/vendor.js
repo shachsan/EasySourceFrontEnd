@@ -3,6 +3,7 @@ $(function(){
     
     let loginType; 
     const baseUrl='http://localhost:3000/api/v1/';
+
     function createTag(tagName){
         return document.createElement(tagName);
     }
@@ -74,14 +75,18 @@ $(function(){
                             $("#login").hide();
                             $("#buyer-page").show();
                             accountFound=true;
-                            loadBuyerScript();
+                            loadBuyerScript(buyer);
                             break;
                         }
                     }
                     
                     if(!accountFound){
                             alert("Sorry, no account was found with that username and email! Please enter the correct credential.")
+                    }else{
+
                     }
+
+                    
                     
             })
 
@@ -153,9 +158,12 @@ $(function(){
 
 ////Buyers Js script -------- start here ---------
 
-function loadBuyerScript(){
+function loadBuyerScript(buyer){
     //from buyers page
     const divDisplaySelection = document.getElementById("option-selected");
+    const buyerInfo=document.getElementById('buyer-info');
+    buyerInfo.innerHTML=`<p><strong>Username: ${buyer.username}</strong></p>`+
+                        `<p><strong>Company: ${buyer.name}</strong></p>`
 
 
     fetchGetData(baseUrl+'products')
@@ -753,6 +761,7 @@ function updateTableByCat(e){
             let vpUpdateObj={};
             currentRowChilds.forEach((td,i) => {
                 if(i!==8 && i!==0){
+                    // console.log(td.firstChild);
                     td.innerText=td.firstChild.value;
                     let key=td.getAttribute("name");
                     if(key==='v_item' || key==='case_price'){

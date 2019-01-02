@@ -82,8 +82,6 @@ $(function(){
                     
                     if(!accountFound){
                             alert("Sorry, no account was found with that username and email! Please enter the correct credential.")
-                    }else{
-
                     }
 
                     
@@ -661,7 +659,7 @@ function updateTableByCat(e){
         }
 
         if(eventSingleClk.target.innerText==='Edit'){
-            
+            console.log("clicked on Edit button");
             let id=eventSingleClk.target.parentNode.parentNode.id;
             fetch(`http://localhost:3000/api/v1/products/${id}`)
                 .then(res=>res.json())
@@ -726,7 +724,9 @@ function updateTableByCat(e){
         return currentTrChilds;
     }
 
-    function highlightEditableCells(e){
+    function highlightEditableCells(e){//e is singleClick event object created when first clicked on the edit button
+        //problem could passing event object from tableaction function to editable cells to highlighteditcells
+        console.log("inside highlight edit cells:", e.target);
         let currentTr=e.target.parentNode.parentNode;
         let currentTrChilds=currentTr.childNodes;
 
@@ -751,7 +751,7 @@ function updateTableByCat(e){
 
         // Action when vendor clicks on 'update' button
         function updateData(eve){
-            
+            console.log(eve.target);
             let currentRow=eve.target.parentNode.parentNode;
             let id=currentRow.id;
             let vpid=currentRow.dataset.vpid;

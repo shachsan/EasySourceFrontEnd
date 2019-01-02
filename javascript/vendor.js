@@ -749,54 +749,55 @@ function updateTableByCat(e){
 
         e.target.nextElementSibling.addEventListener('click', updateData);
 
-        // Action when vendor clicks on 'update' button
-        function updateData(eve){
-            console.log(eve.target);
-            let currentRow=eve.target.parentNode.parentNode;
-            let id=currentRow.id;
-            let vpid=currentRow.dataset.vpid;
-            currentRowChilds=currentRow.childNodes;
+    }
 
-            let updateItems={};
-            let vpUpdateObj={};
-            currentRowChilds.forEach((td,i) => {
-                if(i!==8 && i!==0){
-                    // console.log(td.firstChild);
-                    td.innerText=td.firstChild.value;
-                    let key=td.getAttribute("name");
-                    if(key==='v_item' || key==='case_price'){
-                        vpUpdateObj[key]=td.innerText;
-                    }else{
+    // Action when vendor clicks on 'update' button
+    function updateData(eve){
+        console.log("which update buttton?", eve.target);
+        let currentRow=eve.target.parentNode.parentNode;
+        let id=currentRow.id;
+        let vpid=currentRow.dataset.vpid;
+        currentRowChilds=currentRow.childNodes;
 
-                        updateItems[key]=td.innerText;
-                    }
+        let updateItems={};
+        let vpUpdateObj={};
+        currentRowChilds.forEach((td,i) => {
+            if(i!==8 && i!==0){
+                // console.log(td.firstChild);
+                td.innerText=td.firstChild.value;
+                let key=td.getAttribute("name");
+                if(key==='v_item' || key==='case_price'){
+                    vpUpdateObj[key]=td.innerText;
+                }else{
+
+                    updateItems[key]=td.innerText;
                 }
-            })
-            eve.target.style.display='none';//hide the update button
-            eve.target.previousElementSibling.style.display='inline';//display edit button
+            }
+        })
+        eve.target.style.display='none';//hide the update button
+        eve.target.previousElementSibling.style.display='inline';//display edit button
 
-            //fectch update--product
-            fetch(`http://localhost:3000/api/v1/products/${id}`,{
-                method: 'PATCH',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify(updateItems)
-            })
+        //fectch update--product
+        fetch(`http://localhost:3000/api/v1/products/${id}`,{
+            method: 'PATCH',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(updateItems)
+        })
 
-            //complete fetch update--product
+        //complete fetch update--product
 
 
-            //fetch update ---vendor_products for price and v_item
-            
-            fetch(`http://localhost:3000/api/v1/vendor_products/${vpid}`,{
-                method: 'PATCH',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify(vpUpdateObj)
-            })
-            //end of vendor_products update
-
-        }
+        //fetch update ---vendor_products for price and v_item
+        
+        fetch(`http://localhost:3000/api/v1/vendor_products/${vpid}`,{
+            method: 'PATCH',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(vpUpdateObj)
+        })
+        //end of vendor_products update
 
     }
+
 
     function getProdNvenProdAttrs(){
         let attrs=["img_url", "name", "size", "barcode", "brand", "category_id", "v_item", "case_price"];

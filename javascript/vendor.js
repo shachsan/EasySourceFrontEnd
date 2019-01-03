@@ -59,6 +59,12 @@ $(function(){
     
     })
 
+    $("#signup-button").click(function(){
+        $(this).fadeOut();
+        $("#login-button").fadeOut();
+        $("#signup").fadeIn();
+    })
+
     $("#login-type a").click(()=>location.reload());
 
     $(".login-form").submit(function(){

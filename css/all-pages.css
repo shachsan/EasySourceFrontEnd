@@ -87,9 +87,7 @@
 }
 
 
-.align-text{
 
-}
 
 .product-exist:hover, .product-exist:active{
     background:lightgreen;
@@ -290,9 +288,7 @@ table {
     font-size: 2em;
   }
 
-  .log-sign:hover{
-    
-  }
+ 
 
   .login-block{
     background: #DE6262;  /* fallback for old browsers */

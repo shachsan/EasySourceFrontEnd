@@ -30,12 +30,8 @@ $(function(){
                         option.innerText = cat.main_cat;
                         selectCatBox.append(option);
                     }
-                    // ele.parentNode.append(categorySelBox);
-                    // $(ele).fadeIn();
+                   
                 })
-                
-                // return categorySelBox;
-     
     }
     
 
@@ -49,21 +45,33 @@ $(function(){
     $("#buyer").click(function(){
         loginType="buyer";
         $("#login-type").fadeOut();
-        $(".container").fadeIn();
+        $("#signup").fadeOut();
+        $("#login-main").fadeIn();
     })
 
     $("#whlsr").click(function(){
         loginType="vendor";
         $("#login-type").fadeOut();
-        $(".container").fadeIn();
+        $("#signup").fadeOut();
+        $("#login-main").fadeIn();
     
     })
 
     $("#signup-button").click(function(){
         $(this).fadeOut();
+        $("#login").fadeOut();
         $("#login-button").fadeOut();
         $("#signup").fadeIn();
     })
+
+    // $("#buyer-radio").click(function(){
+    //     $(this).checked;
+    // })
+
+    // $("#vendor-radio").click(function(){
+    //     $(this).checked;
+    //     $(this).active;
+    // })
 
     $("#login-type a").click(()=>location.reload());
 
@@ -129,6 +137,49 @@ $(function(){
     })
 
 
+    //Sign up form submit button start
+    $(".signup-form").submit(function(){
+        event.preventDefault();
+        let buyerRadio = $('#bradio').prop('checked');
+        let wholesaleRadio = $('#wradio').prop('checked');
+        const signupForm=document.getElementsByClassName('signup-form')[0];
+        // let data = new FormData(signupForm);
+        let newObj={method:'POST',
+                    headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({
+                        username:signupForm.user.value,
+                        email:signupForm.email.value,
+                        name:signupForm.companyname.value,
+                        address_st:signupForm.streetaddress.value,
+                        city:signupForm.city.value,
+                        zipcode:signupForm.zip.value,
+                        phone:signupForm.phone.value})};
+
+        if (buyerRadio){
+            //fetch post buyers table
+            fetchPostData(baseUrl+'buyers', newObj)
+                .then((newBuyer)=>{
+                    $("#signup").hide();
+                    $("#buyer-page").show();
+                    loadBuyerScript(newBuyer);
+                })
+           
+        }
+
+        if(wholesaleRadio){
+            //fetch post vendors table
+        }
+        console.log(buyerRadio);
+        console.log(wholesaleRadio);
+
+
+        // console.log(data.name);
+    })
+
+
+    //Signup form submit end
+
+
     //form validation
     $('.login-form').validate({ // initialize the plugin
         rules: {
@@ -176,7 +227,7 @@ function loadBuyerScript(buyer){
     let divProduct;
     const divDisplaySelection = document.getElementById("option-selected");
     const buyerInfo=document.getElementById('buyer-info');
-    buyerInfo.innerHTML=`<p><strong>Username: ${buyer.username}</strong></p>`+
+    buyerInfo.innerHTML=`<p><strong>Welcome ${buyer.username}</strong></p>`+
                         `<p><strong>Company: ${buyer.name}</strong></p>`
 
     $("#nav-all-products").click(function(){
@@ -222,13 +273,9 @@ function loadBuyerScript(buyer){
             const selectCatBox=e.target.nextElementSibling
             $(selectCatBox).empty();
             $(".search-input").fadeOut('slow');
-            // if (e.target.nextElementSibling){
-            //     e.target.nextElementSibling.remove();
-            // }else{
                 $(selectCatBox).toggle(100);
                 fetchCategory(selectCatBox);
                 selectCatBox.addEventListener('change', searchByCategory);
-            // }
         }
 })
 
@@ -476,6 +523,7 @@ function loadVendorScript(){
         
             if (e.target.innerText==="Barcode"){
                 const inputBarcode=e.target.nextElementSibling
+                $(".search-input").not(inputBarcode).fadeOut('slow');
                 $(inputBarcode).toggle('slow', ()=>{
                     inputBarcode.value='';
                     inputBarcode.addEventListener('keyup', updateTableByBarcode)
@@ -483,16 +531,17 @@ function loadVendorScript(){
         
             }else if (e.target.innerText==="Name"){
                 const inputName=e.target.nextElementSibling
+                $(".search-input").not(inputName).fadeOut('slow');
                 $(inputName).toggle(800);
                 inputName.addEventListener('keyup', updateTableByName)
             
             }else if (e.target.innerText==="Category"){
-                if (e.target.nextElementSibling){
-                    e.target.nextElementSibling.remove();
-                }else{
-                    let selectBox=fetchCategory(e.target);
-                    selectBox.addEventListener('change', updateTableByCat);
-                }
+                const selectCatBox=e.target.nextElementSibling
+                $(selectCatBox).empty();
+                $(".search-input").fadeOut('slow');
+                $(selectCatBox).toggle(100);
+                fetchCategory(selectCatBox);
+                selectCatBox.addEventListener('change', updateTableByCat);
             
             }
         })

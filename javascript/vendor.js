@@ -4,12 +4,19 @@ $(function(){
     let loginType; 
     const baseUrl='http://localhost:3000/api/v1/';
 
+    
+    document.getElementById('logoff').addEventListener('click', ()=>location.reload());
+    document.getElementById('logoff-buyer').addEventListener('click', ()=>location.reload());
+    
+    
+   
+   
     function createTag(tagName){
         return document.createElement(tagName);
     }
 
-    document.getElementById('logoff').addEventListener('click', ()=>location.reload());
-    document.getElementById('logoff-buyer').addEventListener('click', ()=>location.reload());
+
+    
 
     function fetchCategory(selectCatBox){
         // const categorySelBox=createTag('select');
@@ -159,11 +166,19 @@ $(function(){
 
 function loadBuyerScript(buyer){
     //from buyers page
+    // let allProductsData;
+    let divProduct;
     const divDisplaySelection = document.getElementById("option-selected");
     const buyerInfo=document.getElementById('buyer-info');
     buyerInfo.innerHTML=`<p><strong>Username: ${buyer.username}</strong></p>`+
                         `<p><strong>Company: ${buyer.name}</strong></p>`
 
+    $("#nav-all-products").click(function(){
+        divProduct.childNodes.forEach(function(product){
+            product.style.display='block';
+        })
+    })
+    
 
     fetchGetData(baseUrl+'products')
         .then((products)=>showAllProducts(products));
@@ -234,26 +249,9 @@ function fetchVendors(selectVenBox){ //ele is current target element. It is pass
 }
 
 
-// function createVendorSelectBox(vendors, ele){
-//     const vendorSelBox=createTag('select');
-//     vendorSelBox.setAttribute('class','filter');
-//     for(let vendor of vendors){
-//         const option=document.createElement('option');
-//         option.value = vendor.name;
-//         option.innerText = vendor.name;
-//         vendorSelBox.append(option);
-//     }
-//     ele.parentNode.append(vendorSelBox);
-//     // ele.style.display='inline';
-//     $(ele).fadeIn('slow');
-//     vendorSelBox.addEventListener('change', searchByVendor)
-// }
-
-
-
 function showAllProducts(products){
     
-    const divProduct = createTag('div');
+    divProduct = createTag('div');
     divProduct.setAttribute('class', 'all-products')
     for(let product of products){
         const divCard = createTag('div');

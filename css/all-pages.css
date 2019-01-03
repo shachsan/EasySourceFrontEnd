@@ -38,10 +38,28 @@
     color: black;
   }
 
+  #signup{
+      display: none;
+  }
+
 .search-input{
     height: 35px;
     border-radius: 10px;
     /* display: inline-block; */
+}
+
+#nav-all-products{
+    border-left-style: groove;
+    padding-left: 10px;
+    height: 20px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 10px;
+    margin-left: 10px;
+    /* text-align: center; */
+    vertical-align: middle;
+    /* border-left-color: lightgoldenrodyellow; */
+    /* border-left: 2px; */
 }
 
 .heading{

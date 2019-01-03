@@ -59,7 +59,7 @@ $(function(){
 
     $("#signup-button").click(function(){
         $(this).fadeOut();
-        $("#login").fadeOut();
+        
         $("#login-button").fadeOut();
         $("#signup").fadeIn();
     })
@@ -140,6 +140,7 @@ $(function(){
     //Sign up form submit button start
     $(".signup-form").submit(function(){
         event.preventDefault();
+        $("#login").fadeOut();
         let buyerRadio = $('#bradio').prop('checked');
         let wholesaleRadio = $('#wradio').prop('checked');
         const signupForm=document.getElementsByClassName('signup-form')[0];
@@ -168,12 +169,15 @@ $(function(){
 
         if(wholesaleRadio){
             //fetch post vendors table
+
+            fetchPostData(baseUrl+'vendors', newObj)
+                .then((newVendor)=>{
+                    $("#signup").hide();
+                    $("#vendor").show();
+                    $('div[name="main"]').attr('id', newVendor.id);
+                    loadVendorScript();
+                })
         }
-        console.log(buyerRadio);
-        console.log(wholesaleRadio);
-
-
-        // console.log(data.name);
     })
 
 
@@ -511,9 +515,10 @@ function loadVendorScript(){
     myProducts.addEventListener('click', resetTable);
     document.getElementById('add-item-btn').addEventListener('click', addNewItem);
     //Base URL for api
-    const baseUrl=`http://localhost:3000/api/v1/`;
+    // const baseUrl=`http://localhost:3000/api/v1/`;
 
     let vendorId=divMain.id;
+    console.log(vendorId);
 
     fetchVendorItems(vendorId);
 

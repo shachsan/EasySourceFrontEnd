@@ -288,6 +288,14 @@ table {
     font-size: 2em;
   }
 
+  .rlabel{
+      margin: 30px;
+  }
+
+  .inradio{
+      margin: 5px;
+  }
+
  
 
   .login-block{

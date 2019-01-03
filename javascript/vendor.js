@@ -264,16 +264,18 @@ function loadBuyerScript(buyer){
             inputName.addEventListener('keyup', searchByName)
         }else if (e.target.innerText==="Vendor"){
             $(".search-input").fadeOut('slow');
-            const selectVenBox=e.target.nextElementSibling
+            const selectVenBox=e.target.nextElementSibling;
             $(selectVenBox).empty();
-            // if (e.target.nextElementSibling){
-            //     e.target.nextElementSibling.remove();
-            // }else{
-                $(selectVenBox).toggle(800);
-                fetchVendors(selectVenBox);
-                selectVenBox. addEventListener('change', filterByVendor);
+            $(selectVenBox).toggle(800);
+            fetchVendors(selectVenBox);
+            selectVenBox. addEventListener('change', filterByVendor);
             // }
         }else if (e.target.innerText==="Category"){
+
+            //test code for multiple sorting
+                //check if vendor selectbox is 
+            //end of test code
+
             const selectCatBox=e.target.nextElementSibling
             $(selectCatBox).empty();
             $(".search-input").fadeOut('slow');
@@ -298,11 +300,8 @@ function fetchVendors(selectVenBox){ //ele is current target element. It is pass
                 option.innerText = vendor.name;
                 selectVenBox.append(option);
             }
-        // ele.parentNode.append(vendorSelBox);
-        // $(ele).fadeIn();
     });
-        // createVendorSelectBox(vendors, ele));
-    // return vendorSelBox;
+        
 }
 
 
@@ -360,7 +359,6 @@ function showVendorDetail(vendorDetail){
         
         ul.style.display="inline-block";
         for(let key in vendor){
-            // if(key !=='id' && key!=='vendor_id' && key!=='phone' && key!=='email'){
             if(key ==='v_item' || key ==='vendor_name'){ 
                 let li=document.createElement('li');
                 li.innerHTML=`<p><strong>${key}</strong>:  ${vendor[key]}</p>`
@@ -398,7 +396,6 @@ function contactVendor(){
     contactBtn.style.backgroundColor='red';
     contactBtn.innerText='Close';
     $(contactBtn).click((e)=>{
-        console.log(e.target);
         e.target.parentNode.remove()});
     contactDiv.append(contactBtn);
     divDisplaySelection.append(contactDiv);
@@ -440,20 +437,15 @@ function searchByName(e){
 ///Search By Vendor
 
 function filterByVendor(e){
-    let vendor=e.target.value;
+    // console.log(vendor);
+    let vendor;
+    (typeof(e)==='object') ? vendor=e.target.value : vendor=e;
     const divVendors=document.querySelectorAll(".vendor-list-div");
-    console.log(divVendors);
-    console.log("vendor", vendor);
     for(divVendor of divVendors){
-        // console.log(ulVendor);
         let parentDiv=divVendor.parentNode;
-
         let noMatch=false;
-        console.log(divVendor);
         for(ulVendor of divVendor.childNodes){
-            console.log(ulVendor);
             if(ulVendor.getAttribute('name')===vendor){
-                console.log("Inside if statement:", ulVendor.getAttribute('name'));
                 parentDiv.style.display='block';
                 noMatch=true;
                 break;
@@ -473,19 +465,27 @@ function filterByVendor(e){
 
 function searchByCategory(e){
     let cat=e.target.value;
-    const spanCats=document.querySelectorAll('.category_type');
-    spanCats.forEach(function(spanCat){
-        let parentDiv=spanCat.parentNode.parentNode.parentNode.parentNode.parentNode;
-        parentDiv.style.display='block';
-        if(spanCat.innerText===cat){
-            parentDiv.style.display='block';
-        }else{
-            
-            parentDiv.style.display='none';
-        }
+    const selectBoxVendor=$("#vendor-selbox")[0].value;
+    if($("#vendor-selbox").is(":visible")){
+        filterByVendor(selectBoxVendor);
+        const spanCats=document.querySelectorAll(".category_type");
+        spanCats.forEach(function(spanCat){
+    
+            let parentDiv=spanCat.parentNode.parentNode.parentNode.parentNode.parentNode;
+            if($(parentDiv).is(":visible")){
+                if(spanCat.innerText===cat){
+                    parentDiv.style.display='block';
+                }else{
+                    
+                    parentDiv.style.display='none';
+                }
+            }
+        })
+    }
+    
 
-    })
 }
+
 }
 
 ////Buyers Js script --------- ends here --------

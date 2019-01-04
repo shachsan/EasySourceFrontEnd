@@ -7,6 +7,8 @@ $(function(){
     
     document.getElementById('logoff').addEventListener('click', ()=>location.reload());
     document.getElementById('logoff-buyer').addEventListener('click', ()=>location.reload());
+    document.getElementById('back').addEventListener('click', ()=>location.reload());
+    document.getElementById('signup-back').addEventListener('click', ()=>location.reload());
     
     
    
@@ -466,9 +468,9 @@ function filterByVendor(e){
 function searchByCategory(e){
     let cat=e.target.value;
     const selectBoxVendor=$("#vendor-selbox")[0].value;
-    const spanCats=document.querySelectorAll(".category_type");
     if($("#vendor-selbox").is(":visible")){
         filterByVendor(selectBoxVendor);
+        const spanCats=document.querySelectorAll(".category_type");
         spanCats.forEach(function(spanCat){
     
             let parentDiv=spanCat.parentNode.parentNode.parentNode.parentNode.parentNode;
@@ -481,21 +483,7 @@ function searchByCategory(e){
                 }
             }
         })
-    }else{
-        //if vendor select box is not active and not visible
-        spanCats.forEach(function(spanCat){
-            let parentDiv=spanCat.parentNode.parentNode.parentNode.parentNode.parentNode;
-            // if($(parentDiv).is(":visible")){
-                parentDiv.style.display='block';
-                if(spanCat.innerText===cat){
-                    parentDiv.style.display='block';
-                }else{
-                    
-                    parentDiv.style.display='none';
-                }
-            // }
-        })
-    }
+    }else{}
     
 
 }

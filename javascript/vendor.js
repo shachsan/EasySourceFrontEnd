@@ -12,7 +12,7 @@ $(function(){
     
     
    
-   
+    //factory for creating elements
     function createTag(tagName){
         return document.createElement(tagName);
     }
@@ -21,8 +21,6 @@ $(function(){
     
 
     function fetchCategory(selectCatBox){
-        // const categorySelBox=createTag('select');
-        // categorySelBox.setAttribute('class','filter');
         fetch('http://localhost:3000/api/v1/categories')
             .then(res => res.json())
             .then((cats)=>{
@@ -32,8 +30,7 @@ $(function(){
                         option.innerText = cat.main_cat;
                         selectCatBox.append(option);
                     }
-                   
-                })
+            })
     }
     
 
@@ -65,15 +62,6 @@ $(function(){
         $("#login-button").fadeOut();
         $("#signup").fadeIn();
     })
-
-    // $("#buyer-radio").click(function(){
-    //     $(this).checked;
-    // })
-
-    // $("#vendor-radio").click(function(){
-    //     $(this).checked;
-    //     $(this).active;
-    // })
 
     $("#login-type a").click(()=>location.reload());
 
@@ -121,7 +109,6 @@ $(function(){
                     for(vendor of vendors){
                         if(vendor.username===username && vendor.email===email){
                             $('div[name="main"]').attr('id', vendor.id);
-                            // console.log(vendor.id);
                             $("#login").hide();
                             $("#vendor").show();
                             accountFound=true;
@@ -146,7 +133,6 @@ $(function(){
         let buyerRadio = $('#bradio').prop('checked');
         let wholesaleRadio = $('#wradio').prop('checked');
         const signupForm=document.getElementsByClassName('signup-form')[0];
-        // let data = new FormData(signupForm);
         let newObj={method:'POST',
                     headers:{'Content-Type':'application/json'},
                     body:JSON.stringify({
@@ -170,8 +156,8 @@ $(function(){
         }
 
         if(wholesaleRadio){
-            //fetch post vendors table
 
+            //fetch post vendors table
             fetchPostData(baseUrl+'vendors', newObj)
                 .then((newVendor)=>{
                     $("#signup").hide();
@@ -181,8 +167,6 @@ $(function(){
                 })
         }
     })
-
-
     //Signup form submit end
 
 
@@ -228,8 +212,6 @@ $(function(){
 ////Buyers Js script -------- start here ---------
 
 function loadBuyerScript(buyer){
-    //from buyers page
-    // let allProductsData;
     let divProduct;
     const divDisplaySelection = document.getElementById("option-selected");
     const buyerInfo=document.getElementById('buyer-info');
@@ -271,13 +253,8 @@ function loadBuyerScript(buyer){
             $(selectVenBox).toggle(800);
             fetchVendors(selectVenBox);
             selectVenBox. addEventListener('change', filterByVendor);
-            // }
+            
         }else if (e.target.innerText==="Category"){
-
-            //test code for multiple sorting
-                //check if vendor selectbox is 
-            //end of test code
-
             const selectCatBox=e.target.nextElementSibling
             $(selectCatBox).empty();
             $(".search-input").fadeOut('slow');
@@ -439,7 +416,6 @@ function searchByName(e){
 ///Search By Vendor
 
 function filterByVendor(e){
-    // console.log(vendor);
     let vendor;
     (typeof(e)==='object') ? vendor=e.target.value : vendor=e;
     const divVendors=document.querySelectorAll(".vendor-list-div");
@@ -516,11 +492,8 @@ function loadVendorScript(){
     buttonAddNewBtn.addEventListener('click', addNewItem);
     myProducts.addEventListener('click', resetTable);
     document.getElementById('add-item-btn').addEventListener('click', addNewItem);
-    //Base URL for api
-    // const baseUrl=`http://localhost:3000/api/v1/`;
 
     let vendorId=divMain.id;
-    console.log(vendorId);
 
     fetchVendorItems(vendorId);
 
@@ -727,7 +700,6 @@ function updateTableByCat(e){
                 targetEle.innerText=editCell.value;
                 editCell.remove();
 
-                // fetch(`http://localhost:3000/`)
             }
         })
 
@@ -786,7 +758,8 @@ function updateTableByCat(e){
         let currentRow=event.target.parentNode.parentNode;
         let vpId=currentRow.dataset.vpid;
         currentRow.style.backgroundColor='red';
-        $(currentRow).fadeOut(1000);
+        // $(currentRow).fadeOut(1000);
+        $(currentRow).hide(1200, function(){ $(currentRow).remove(); });
         
         fetch(baseUrl+`vendor_products/${vpId}`,{
             method: 'DELETE'  
@@ -863,7 +836,6 @@ function updateTableByCat(e){
         let vpUpdateObj={};
         currentRowChilds.forEach((td,i) => {
             if(i!==8 && i!==0){
-                // console.log(td.firstChild);
                 td.innerText=td.firstChild.value;
                 let key=td.getAttribute("name");
                 if(key==='v_item' || key==='case_price'){
@@ -933,6 +905,7 @@ function updateTableByCat(e){
             let addBtn=createTag('button')
             addBtn.innerText='Add';
             addBtn.setAttribute('id','add-item')
+            addBtn.setAttribute('class','btn btn-success');
             actionCell.append(addBtn);
         }
     }
@@ -1065,10 +1038,6 @@ function updateTableByCat(e){
                 itemSelectDiv.append(ul);
                 divMatchProduct.append(itemSelectDiv);
 
-
-            
-        // })
-
     }
 
     function populateRow(){
@@ -1096,6 +1065,15 @@ function updateTableByCat(e){
 
     }
 
+    function changeBgColor(cell){
+        let $el = $(cell),
+        x = 1200,
+        originalColor = $el.css("background");
+        $el.css("background", "green");
+        setTimeout(function(){
+            $el.css("background", originalColor);
+        }, x);
+    }
 
     function fieldsRequired(){
         let attrs=["name", "size", "barcode", "case_price"];
@@ -1108,7 +1086,6 @@ function updateTableByCat(e){
                 let editButton=createTag('button');
                 editButton.setAttribute('class', 'item-action btn btn-primary');
                 editButton.innerText="Edit";
-                // editButton.addEventListener('click', editItem);
 
                 //Create Update to toggle with Edit button and set to display none once created
                 //make it visible once Edit button is click
@@ -1170,16 +1147,19 @@ function updateTableByCat(e){
 
             //if add button's dataset item value is 'exist' do fetch post to vp table
             if(e.target.dataset.item==='exist'){
-
+                // update DOM with new item
                 //set td innerText to the values of input boxes and remove the inputboxes
                 for(let cell of rowCells){
-                    console.log(cell);
                     if(cell.firstChild.name==='img_url'){
                         cell.innerHTML=`<img class="table-img" src=${cell.firstChild.value} width="30px" height="25px">`;
+                        changeBgColor(cell);
                     }else{
                     cell.innerText=cell.firstChild.value;
+                        changeBgColor(cell);
                     }
                 }
+
+
 
                 fetch(`${baseUrl}vendor_products`, {
                     method: 'POST',
@@ -1226,13 +1206,12 @@ function updateTableByCat(e){
 
                     //update DOM
                     for(let cell of rowCells){
-                        console.log(cell);
                         if(cell.firstChild.name==='img_url'){
                             cell.innerHTML=`<img class="table-img" src=${cell.firstChild.value} width="30px" height="25px">`;
+
                         }else{
                         cell.innerText=cell.firstChild.value;
                         }
-                        // cell.firstChild.remove();
                     }
 
                     let actionCell=rowCells[rowCells.length-1];
@@ -1271,15 +1250,12 @@ function updateTableByCat(e){
 
                         fetchPostData(baseUrl+'products', postObj)
                             .then((productPosted)=>{
-                                console.log(productPosted);
                                 vpObj.product_id=productPosted.id;
                                 vpObj.vendor_id=vendorId;
                                 fetch(`${baseUrl}vendor_products`, {
                                     method: 'POST',
                                     headers:{'Content-Type':'application/json'},
                                     body:JSON.stringify(vpObj)
-                                }).then((res)=>{
-                                    console.log(res);
                                 })
                             })
                         

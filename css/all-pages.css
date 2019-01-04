@@ -230,6 +230,10 @@ table {
         float: right;
         /* display: inline-block; */
     }
+
+    #add-product{
+        margin-top: 20px;
+    }
     
     .my-products{
       float: left;

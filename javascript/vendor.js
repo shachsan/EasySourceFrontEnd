@@ -2,7 +2,7 @@ $(function(){
 
     
     let loginType; 
-    const baseUrl='http://localhost:3000/api/v1/';
+    const baseUrl='https://easysource-backend.herokuapp.com/api/v1/';
 
     
     document.getElementById('logoff').addEventListener('click', ()=>location.reload());
@@ -21,7 +21,7 @@ $(function(){
     
 
     function fetchCategory(selectCatBox){
-        fetch('http://localhost:3000/api/v1/categories')
+        fetch('https://easysource-backend.herokuapp.com/api/v1/categories')
             .then(res => res.json())
             .then((cats)=>{
                     for(let cat of cats){
@@ -79,7 +79,7 @@ $(function(){
             
             //fetch get buyer tables and verify if user exist
             //if user exist, hide vendor div and show buyer div, hide login div as well
-            fetchGetData('http://localhost:3000/api/v1/buyers')
+            fetchGetData('https://easysource-backend.herokuapp.com/api/v1/buyers')
                 .then((buyers)=>{
                     let accountFound=false;
                     for(let buyer of buyers){
@@ -103,7 +103,7 @@ $(function(){
         }else{
             //fetch get wholesale tables and verify if user exist
             //if user exist, hide buyer div and show vendor div
-            fetchGetData('http://localhost:3000/api/v1/vendors')
+            fetchGetData('https://easysource-backend.herokuapp.com/api/v1/vendors')
                 .then((vendors)=>{
                     let accountFound=false;
                     for(vendor of vendors){
@@ -270,7 +270,7 @@ function fetchVendors(selectVenBox){ //ele is current target element. It is pass
                             //function so that the select box can be appended into it.
     // const vendorSelBox=createTag('select');
     // vendorSelBox.setAttribute('class','filter');
-    fetch('http://localhost:3000/api/v1/vendors')
+    fetch('https://easysource-backend.herokuapp.com/api/v1/vendors')
         .then(res => res.json())
         .then((vendors) => {
             for(let vendor of vendors){
@@ -585,7 +585,7 @@ function updateTableByCat(e){
 
 
     function fetchVendorItems(id){
-        fetch(`http://localhost:3000/api/v1/vendors/${vendorId}`)
+        fetch(`https://easysource-backend.herokuapp.com/api/v1/vendors/${vendorId}`)
             .then(res=>res.json())
             .then(vendorDetails=>showAllVendorItems(vendorDetails))
     }
@@ -604,7 +604,7 @@ function updateTableByCat(e){
             for(let product of vendorDetails.products){
                 
             let id = product.product_id
-            fetch(`http://localhost:3000/api/v1/products/${id}`)
+            fetch(`https://easysource-backend.herokuapp.com/api/v1/products/${id}`)
                 .then(res=>res.json())
                 .then(productInfo=>populateTable(productInfo, product))
             }
@@ -727,7 +727,7 @@ function updateTableByCat(e){
 
         if(eventSingleClk.target.innerText==='Edit'){
             let id=eventSingleClk.target.parentNode.parentNode.id;
-            fetch(`http://localhost:3000/api/v1/products/${id}`)
+            fetch(`https://easysource-backend.herokuapp.com/api/v1/products/${id}`)
                 .then(res=>res.json())
                 .then(prod=> editableItem(eventSingleClk, prod.vendor_products.length))    
         }
@@ -842,7 +842,7 @@ function updateTableByCat(e){
         eve.target.previousElementSibling.style.display='inline';//display edit button
 
         //fectch update--product
-        fetch(`http://localhost:3000/api/v1/products/${id}`,{
+        fetch(`https://easysource-backend.herokuapp.com/api/v1/products/${id}`,{
             method: 'PATCH',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify(updateItems)
@@ -853,7 +853,7 @@ function updateTableByCat(e){
 
         //fetch update ---vendor_products for price and v_item
         
-        fetch(`http://localhost:3000/api/v1/vendor_products/${vpid}`,{
+        fetch(`https://easysource-backend.herokuapp.com/api/v1/vendor_products/${vpid}`,{
             method: 'PATCH',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify(vpUpdateObj)
@@ -977,7 +977,7 @@ function updateTableByCat(e){
 
             //fetch update ---vendor_products for price and v_item
             
-            fetch(`http://localhost:3000/api/v1/vendor_products/${vpid}`,{
+            fetch(`https://easysource-backend.herokuapp.com/api/v1/vendor_products/${vpid}`,{
                 method: 'PATCH',
                 headers:{'Content-Type':'application/json'},
                 body:JSON.stringify(vpUpdateObj)

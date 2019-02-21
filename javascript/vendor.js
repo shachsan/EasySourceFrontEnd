@@ -878,6 +878,7 @@ function updateTableByCat(e){
         buttonAddNewBtn.style.display='block';
         buttonCancelBtn.style.display='none';
         topAddNewBtn.style.display='block';
+        addInstruction.style.display='none';
         while (divMatchProduct.firstChild) {
             divMatchProduct.removeChild(divMatchProduct.firstChild);
         }

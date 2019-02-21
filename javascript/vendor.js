@@ -482,16 +482,19 @@ function loadVendorScript(){
     const divProductDetail=document.getElementById('all-product');
     const tableProduct=document.getElementById('product-table');
     const buttonAddNewBtn=document.getElementById('add-product');
+    const topAddNewBtn=document.getElementById('add-item-btn');
+    const buttonCancelBtn=document.getElementById('cancel-add-product');
     const errorMsg=document.getElementsByClassName('error-msg')[0];
+    const addInstruction=document.getElementsByClassName('add-instruction')[0];
     const vendorContainerDiv=document.getElementById('vendor');
     const divMatchProduct=document.getElementById('match-product');
     const myProducts=document.getElementById('my-prod');
     
-    // tableProduct.addEventListener('dblclick', tableAction);
     tableProduct.addEventListener('click', tableActionOnSingleClick);
     buttonAddNewBtn.addEventListener('click', addNewItem);
+    buttonCancelBtn.addEventListener('click', cancelAddNewProduct);
     myProducts.addEventListener('click', resetTable);
-    document.getElementById('add-item-btn').addEventListener('click', addNewItem);
+    topAddNewBtn.addEventListener('click', addNewItem);
 
     let vendorId=divMain.id;
 
@@ -712,14 +715,6 @@ function updateTableByCat(e){
             errorMsg.style.display='none';
         }
 
-        if(eventSingleClk.target.name==='barcode'){
-            getAllProducts().then((allProducts)=>{//added new line
-                eventSingleClk.target.addEventListener('keyup', function(e){
-                    lookupProductForBarcode(e, allProducts)
-                });
-            })//added new line
-        }
-
         //if add button inside new cell is click
         if(eventSingleClk.target.id==='add-item'){
             addNewProduct(eventSingleClk);
@@ -731,7 +726,6 @@ function updateTableByCat(e){
         }
 
         if(eventSingleClk.target.innerText==='Edit'){
-            console.log("clicked on Edit button");
             let id=eventSingleClk.target.parentNode.parentNode.id;
             fetch(`http://localhost:3000/api/v1/products/${id}`)
                 .then(res=>res.json())
@@ -799,7 +793,6 @@ function updateTableByCat(e){
 
     function highlightEditableCells(e){//e is singleClick event object created when first clicked on the edit button
         //problem could passing event object from tableaction function to editable cells to highlighteditcells
-        console.log("inside highlight edit cells:", e.target);
         let currentTr=e.target.parentNode.parentNode;
         let currentTrChilds=currentTr.childNodes;
 
@@ -826,7 +819,6 @@ function updateTableByCat(e){
 
     // Action when vendor clicks on 'update' button
     function updateData(eve){
-        console.log("which update buttton?", eve.target);
         let currentRow=eve.target.parentNode.parentNode;
         let id=currentRow.id;
         let vpid=currentRow.dataset.vpid;
@@ -881,8 +873,23 @@ function updateTableByCat(e){
         return attrs;
     }
 
-
+    function cancelAddNewProduct(){
+        $('#product-table tbody tr').last().remove();
+        buttonAddNewBtn.style.display='block';
+        buttonCancelBtn.style.display='none';
+        topAddNewBtn.style.display='block';
+        while (divMatchProduct.firstChild) {
+            divMatchProduct.removeChild(divMatchProduct.firstChild);
+        }
+        
+    }
+    
+    
     function addNewItem(){
+        buttonAddNewBtn.style.display='none';
+        buttonCancelBtn.style.display='block';
+        topAddNewBtn.style.display='none';
+        addInstruction.style.display='block';
         let row=tableProduct.insertRow();
         row.style.height="50px";
         
@@ -898,10 +905,10 @@ function updateTableByCat(e){
             }
         })
 
-        document.querySelector('input[name="name"]').focus();
+        document.querySelector('input[name="barcode"]').addEventListener('focus', barcodeOnFocusHandler)
 
         let actionCell=row.insertCell();
-        if (requiredFields()!==""){         //requiredFields functions not implemented yet
+        if (requiredFields()!==""){         
             let addBtn=createTag('button')
             addBtn.innerText='Add';
             addBtn.setAttribute('id','add-item')
@@ -990,9 +997,18 @@ function updateTableByCat(e){
         }
     }
 
+    function barcodeOnFocusHandler(e){
+        getAllProducts().then((allProducts)=>{//added new line
+            e.target.addEventListener('keyup', function(e){
+                lookupProductForBarcode(e, allProducts)
+            });
+        })
+    }
+
 
 
     function lookupProductForBarcode(e,allProducts){
+        addInstruction.style.display='none';
         let userUpc=e.target.value
 
         //On below line, .filter methods remove the null value from the array since map returns undefined for not found item
@@ -1115,6 +1131,8 @@ function updateTableByCat(e){
 
 
     function addNewProduct(e){
+        buttonCancelBtn.style.display='none';
+        buttonAddNewBtn.style.display='block';
         let currentTr=e.target.parentNode.parentNode;
         let rowCells=currentTr.childNodes;
         let requiredCellsEmpty=false;

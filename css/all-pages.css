@@ -239,6 +239,18 @@ table {
       float: left;
   }
 
+  #cancel-add-product{
+      display: none;
+      float: right;
+      margin: 10px 15px;
+      width: 15%;
+  }
+  .add-instruction{
+      max-width: 70%;
+      background-color: lightblue;
+      font-weight: bolder;
+  }
+
   /* #item-found{
       border: 5px solid rgb(255, 145, 0);
       margin: 5px;

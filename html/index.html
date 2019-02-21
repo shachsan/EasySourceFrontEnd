@@ -3,57 +3,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="../javascript/jquery-3.3.1.js"></script>
+    <!-- <script src="../javascript/jquery-3.3.1.js"></script> -->
 
     <!-- for login-form start -->
     <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"> -->
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- <script src="../javascript/jquery.msgBox.js" type="text/javascript"></script> -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
 
     <!-- login form end -->
 
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="../css/image.css">
+    <link rel="stylesheet" type="text/css" href="../css/all-pages.css">
     <title>Document</title>
 </head>
 <body>
 
 
 
-  <!-- Login Form -- start here -->
+  <!-- Login Page -- start here -->
   <section class="login-block" id="login">
+    <div class="logo"><img src="../images/yellowheading.png"></div>
       <div id='login-button' class="log-sign"><button type="button" class="btn btn-outline-dark btn-lg">Login</button></div>
       <div id='signup-button' class="log-sign"><button type="button" class="btn btn-outline-dark btn-lg">Sign Up</button></div>
 
+      <!-- Login type start -->
       <div id="login-type">Please let us know who you are?<br>
         <button id="buyer" type="button" class="btn btn-outline-dark btn-lg">Buyer</button>
-        <button id="whlsr" type="button" class="btn btn-outline-dark btn-lg">Wholesale Vendor</button>
+        <button id="whlsr" type="button" class="btn btn-outline-dark btn-lg">Wholesale Vendor</button><br>
+        <a href="#" class="previous">&laquo; Back</a>
       </div>
+      <!-- Login type ends -->
 
-      <div style="display: none" class="container">
+      <!-- login form start -->
+      <div id="login-main" style="display: none" class="container">
         <div class="row">
           <div class="col-md-4 login-sec">
             <h2 class="text-center">Login Now</h2>
             <form class="login-form">
               <div class="form-group">
-                <label for="exampleInputEmail1" class="text-uppercase">Username</label>
+                <label for="user" class="text-uppercase">Username</label>
                 <input name="user" type="text" class="form-control" placeholder="">
       
               </div>
               <div class="form-group">
-                <label for="exampleInputPassword1" class="text-uppercase">Email</label>
+                <label for="email" class="text-uppercase">Email</label>
                 <input name="email" type="email" class="form-control" placeholder="Enter your email address">
               </div>
     
     
                 <div class="form-check">
-                  <label class="form-check-label">
-                  <input type="checkbox" class="form-check-input">
-                  <small>Remember Me</small>
-                  </label>
+                  <button id="back" class="btn btn-login">Back</button>
                   <button type="submit" class="btn btn-login float-right">Submit</button>
                 </div>
     
@@ -61,11 +65,155 @@
           </div>
 
           <div >
-            <img style="width: 650px" src="https://www.thebalancesmb.com/thmb/W5UcstISAkdS-sBHvuGLrR5FFsQ=/400x250/filters:no_upscale():max_bytes(150000):strip_icc()/162761880-56a7f8523df78cf7729b3600.jpg">
+            <img width="750px" height="400px" src="https://www.thebalancesmb.com/thmb/W5UcstISAkdS-sBHvuGLrR5FFsQ=/400x250/filters:no_upscale():max_bytes(150000):strip_icc()/162761880-56a7f8523df78cf7729b3600.jpg">
           </div>
         </div>
         
       </div>
+      <!-- Login form --ends -->
+
+
+      <!-- Sign -->
+
+      <!-- Sign up form ---starts -->
+      <div id="signup" style="display: none" class="container">
+        <div class="row">
+          <div class="col-md-4 login-sec">
+            <h2 class="text-center">Create Account</h2>
+            <form class="signup-form">
+              
+              <div class="form-group">
+              
+                  <label class="radio-inline rlabel">
+                      <input type="radio" id="bradio" class="radio-inline inradio" value="buyer" name="accoutRadio" required>Buyer</input>
+                  </label>
+
+                  <label class="radio-inline rlabel">
+                      <input type="radio" id="wradio" class="radio-inline inradio" value="wholesaler" name="accoutRadio" required>Wholesaler
+                  </label>
+                
+              </div>
+                
+              <div class="form-group">
+                <label for="user" class="text-uppercase">Username</label>
+                <input name="user" type="text" class="form-control" placeholder="" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="email" class="text-uppercase">Email</label>
+                <input name="email" type="email" class="form-control" placeholder="Enter your email address" required>
+              </div>
+
+              <div class="form-group">
+                <label for="companyname" class="text-uppercase">Company Name</label>
+                <input name="companyname" type="text" class="form-control" placeholder="" required>
+              </div>
+
+              <div class="form-group">
+                <label for="streetaddress" class="text-uppercase">Street Address</label>
+                <input name="streetaddress" type="text" class="form-control" placeholder="">
+              </div>
+
+              <div class="form-group">
+                <label for="city" class="text-uppercase">City</label>
+                <input name="city" type="text" class="form-control" placeholder="">
+              </div>
+
+              <div class="form-group">
+                <label for="state" class="text-uppercase">State</label>
+                <select class="form-control" id="state" name="state">
+                  <option value="">N/A</option>
+                  <option value="AK">Alaska</option>
+                  <option value="AL">Alabama</option>
+                  <option value="AR">Arkansas</option>
+                  <option value="AZ">Arizona</option>
+                  <option value="CA">California</option>
+                  <option value="CO">Colorado</option>
+                  <option value="CT">Connecticut</option>
+                  <option value="DC">District of Columbia</option>
+                  <option value="DE">Delaware</option>
+                  <option value="FL">Florida</option>
+                  <option value="GA">Georgia</option>
+                  <option value="HI">Hawaii</option>
+                  <option value="IA">Iowa</option>
+                  <option value="ID">Idaho</option>
+                  <option value="IL">Illinois</option>
+                  <option value="IN">Indiana</option>
+                  <option value="KS">Kansas</option>
+                  <option value="KY">Kentucky</option>
+                  <option value="LA">Louisiana</option>
+                  <option value="MA">Massachusetts</option>
+                  <option value="MD">Maryland</option>
+                  <option value="ME">Maine</option>
+                  <option value="MI">Michigan</option>
+                  <option value="MN">Minnesota</option>
+                  <option value="MO">Missouri</option>
+                  <option value="MS">Mississippi</option>
+                  <option value="MT">Montana</option>
+                  <option value="NC">North Carolina</option>
+                  <option value="ND">North Dakota</option>
+                  <option value="NE">Nebraska</option>
+                  <option value="NH">New Hampshire</option>
+                  <option value="NJ">New Jersey</option>
+                  <option value="NM">New Mexico</option>
+                  <option value="NV">Nevada</option>
+                  <option value="NY">New York</option>
+                  <option value="OH">Ohio</option>
+                  <option value="OK">Oklahoma</option>
+                  <option value="OR">Oregon</option>
+                  <option value="PA">Pennsylvania</option>
+                  <option value="PR">Puerto Rico</option>
+                  <option value="RI">Rhode Island</option>
+                  <option value="SC">South Carolina</option>
+                  <option value="SD">South Dakota</option>
+                  <option value="TN">Tennessee</option>
+                  <option value="TX">Texas</option>
+                  <option value="UT">Utah</option>
+                  <option value="VA">Virginia</option>
+                  <option value="VT">Vermont</option>
+                  <option value="WA">Washington</option>
+                  <option value="WI">Wisconsin</option>
+                  <option value="WV">West Virginia</option>
+                  <option value="WY">Wyoming</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="zip" class="text-uppercase">Zip Code</label>
+                <input name="zip" pattern="[0-9]{5}" title="Five digit zip code" type="text" class="form-control" placeholder="" required/>
+              </div>
+              
+              <div class="form-group">
+                <label for="phone" class="text-uppercase">Phone</label>
+                <input type="tel" id="phone" name="phone" class="form-control" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="format: 000-000-0000" required>
+              </div>
+    
+              <div class="form-check">
+                <button id="signup-back" class="btn btn-login">Back</button>
+                <button type="submit" class="btn btn-login float-right">Submit</button>
+              </div>
+    
+            </form>
+          </div>
+
+          <div class="col-md-8">
+            <h2 class="text-center">Some of our featured clients</h2>
+            <img class="feature-clients" width="700px" height="300px" style="border:5px solid orange" src="../images/italian-product.png">
+          <!-- </div> -->
+
+          <!-- <div class="feature-clients"> -->
+              <img class="feature-clients" width="700px" height="300px" style="border:5px solid orange" src="../images/wholefood.png">
+            <!-- </div> -->
+          <!-- <div class="feature-clients"> -->
+              <img class="feature-clients" width="700px" height="300px" style="border:5px solid orange" src="../images/feature-unfi.png">
+            </div>
+
+
+        </div>
+        
+      </div>
+      <!-- Sign up form ---end --- -->
+
   </section>
   <!-- Login From -- Ends here -->
 
@@ -77,45 +225,55 @@
           <h1>EasySource - Wholesaler Page</h1>
           <h5>Show your offerings to businesses</h5>
         </div>
-            <div id="vendor-options">
+            <div id="nav-div">
             
                 <!-- navbar for Search options begins here -->
-                    <!-- <nav class="navbar navbar-expand-lg navbar-light" style="background-color: orange">
-                            <a class="navbar-brand" href="#">Search Products By</a>
+                    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: orange">
+                            <a class="navbar-brand nav-vendor" href="#"></a>
                             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                               <span class="navbar-toggler-icon"></span>
                             </button>
                             <div class="collapse navbar-collapse" id="navbarNav">
-                              <ul class="navbar-nav" id="vendor-selection">
+                              <ul class="navbar-nav mr-auto" id="vendor-selection">
+                                
                                 <li class="nav-item active">
-                                  <a class="nav-link" href="#">Barcode </a>
-                                  <input type="text" style="display:none" placeholder="Enter Barcode"/>
-                                </li>
-                                <li class="nav-item">
-                                  <a class="nav-link" href="#">Name</a>
+                                  <a class="nav-link" href="#">Search</a>
                                   <input type="text" style="display:none" placeholder="Enter Name"/>
                                 </li>
+                                
                                 <li class="nav-item">
-                                  <a class="nav-link" href="#">My Buyers</a>
+                                  <a class="nav-link" href="#">Barcode </a>
+                                  <input class="search-input" type="text" style="display:none" placeholder="Enter Barcode"/>
                                 </li>
+                                
                                 <li class="nav-item">
-                                  <a class="nav-link" href="#">Category</a>
+                                  <a class="nav-link" href="#">Name</a>
+                                  <input class="search-input" type="text" style="display:none" placeholder="Enter Name"/>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Order History</a>
+                                  <a class="nav-link" href="#">Category</a>
+                                  <select class="selbox filter" style="display:none"></select>
+                                  <!-- <select id=""></select> -->
                                 </li>
+
                               </ul>
+
+                              <span class="navbar-text">
+                                <a id="logoff" class="nav-link" href="#">Log Off</a>
+                              </span>
+                              
                             </div>
-                    </nav> -->
+                    </nav>
             </div>
             <div name="main">
 
                 <div id="vendor-info" class="container">
 
                 </div>
-
                 <div id="all-product">
+                  <div class="my-products"><button id="my-prod" class="btn btn-info">My Products</button></div>
+                  <div class="new-item"><button id="add-item-btn" class="btn btn-success">Add New Product</button></div>
                     <table id="product-table">
                             <tr>
                                 <th>Image</th>
@@ -130,18 +288,22 @@
                             </tr>
                     </table>
                 </div>
+                <div id="match-product"></div>
                 <span class="error-msg" style="display:none">Hightlighted cells can not be empty.</span>
-                <button id="add-product" class="btn btn-success">Add New Product</button>
-
+                <div class="new-item"><button id="add-product" class="btn btn-success">Add New Product</button></div>
+                
             </div>
         </div>
     </div>
 
     <!-- End of vendor page -->
 
+
+    <!-- Buyer Page start here -->
     <div id="buyer-page">
       <div class="heading">
         <h1>EasySource</h1>
+        <div id="buyer-info"></div>
         <h6>Source products for your business </h6>
       </div>
         <div id="buyer-options">
@@ -153,32 +315,36 @@
                           <span class="navbar-toggler-icon"></span>
                         </button>
                         <div class="collapse navbar-collapse" id="navbarNav">
-                          <ul class="navbar-nav" id="buyer-selection">
+                          <ul class="navbar-nav mr-auto" id="buyer-selection">
                             <li class="nav-item active">
                               <a class="nav-link" href="#">Barcode </a>
-                              <input type="text" style="display:none" placeholder="Enter Barcode"/>
+                              <input class="search-input" type="text" style="display:none" placeholder="Enter Barcode"/>
                             </li>
                             <li class="nav-item">
                               <a class="nav-link" href="#">Name</a>
-                              <input type="text" style="display:none" placeholder="Enter Name"/>
+                              <input class="search-input" type="text" style="display:none" placeholder="Enter Name"/>
                             </li>
                             <li class="nav-item">
                               <a class="nav-link" href="#">Vendor</a>
+                              <select class="selbox filter" id="vendor-selbox" style="display:none"></select>
                             </li>
                             <li class="nav-item">
                               <a class="nav-link" href="#">Category</a>
+                              <select class="selbox filter" id="category-selbox" style="display:none"></select>
                             </li>
+
+                            <li class="nav-item">
+                              <a class="nav-link" id="nav-all-products" href="#">All Products</a>
+                            </li>
+
                           </ul>
+                          <span class="navbar-text">
+                              <a id="logoff-buyer" class="nav-link" href="#">Log Off</a>
+                            </span>
                         </div>
                 </nav>
                     <!-- End of nav bar Search options -->
-        <!-- <ul>
-            <li id="all"></li>
-            <li id="barcode">Search Product by Barcode</li>
-            <li id="name">Search Product by Name</li>
-            <li id="vendor">Search Product by Vendor</li>
-            <li id="cat">Search Product by Category</li>
-        </ul> -->
+       
         </div>
         <div id="option-selected" style="display:none;">
               

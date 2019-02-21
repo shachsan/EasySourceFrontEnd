@@ -13,10 +13,83 @@
     display: block;
 }
 
+.logo{
+    text-align: center;
+    height: 200px;
+    /* margin-bottom: 50px; */
+    
+}
+
+.logo img{
+    width: 85%;
+
+}
+
+#login-button, #signup-btton{
+    text-align: center;
+    
+}
+
+#login-type a {
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+    margin-top: 80px;
+    border: 1px solid black;
+    background: transparent;
+    width: 120px;
+    height: 40px;
+    border-radius: 20px;
+    padding: 5px;
+    font-size: 0.6em;
+  }
+  
+ #login-type a:hover {
+    background-color: black;
+    color: white;
+  }
+  
+  .previous {
+    background-color: #f1f1f1;
+    color: black;
+  }
+
+  #signup{
+      display: none;
+  }
+
+  .feature-clients{
+      margin: 10px;
+  }
+
+.search-input{
+    height: 35px;
+    border-radius: 10px;
+    /* display: inline-block; */
+}
+
+#nav-all-products{
+    border-left-style: groove;
+    padding-left: 10px;
+    height: 20px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 10px;
+    margin-left: 10px;
+    /* text-align: center; */
+    vertical-align: middle;
+    /* border-left-color: lightgoldenrodyellow; */
+    /* border-left: 2px; */
+}
+
 .heading{
     background-image: linear-gradient(-90deg, #ff6666, orange);
     padding: 10px;
 
+}
+
+.heading h1{
+    display: inline;
 }
 
 .vendor{
@@ -28,13 +101,13 @@
 
 #vendor-info{
     margin-left: 0px;
+    display: inline-block;
+    /* float: left; */
     /* width: 65%; */
 }
 
 
-.align-text{
 
-}
 
 .product-exist:hover, .product-exist:active{
     background:lightgreen;
@@ -51,11 +124,19 @@
     border: 1px solid orange;
 }
 
-
+.nav-vendor{
+    border: 2px solid black;
+    padding: 10px;
+}
 
 .product, .image-div, .vendor-list-div, .product-detail-div{ 
     vertical-align: top;
     padding: 5px;
+}
+
+#buyer-info{
+    float: right;
+    display: inline;
 }
 
 #all-product{
@@ -80,10 +161,53 @@ table {
       /* width: 30%; */
   }
 
+
   .item-action{
       margin: 5px;
   }
 
+  #flash{
+    display: none;
+    /* position: absolute; */
+    background: yellow;
+    text-align: center;
+    width: 400px;
+    height: 50px;
+    z-index: 10;
+    padding: 10px 5px;
+    
+
+    /* top: 120vh;
+    left: 30vh; */
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+/* bring your own browser transform prefixes */
+    transform: translate(-50%, -50%);
+    /* transform: translate(-50%, -50%); */
+    /* top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px; */
+  }
+
+  #contact{
+    display: none;
+    background: lightskyblue;
+    text-align: center;
+    border: 1px solid blue;
+    width: 250px;
+    height: 350px;
+    z-index: 10;
+    padding: 5px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  
   input[type=text]{
     
     width: 100%;
@@ -92,27 +216,55 @@ table {
     box-sizing: border-box;
   }
 
-  #add-product{
+#match-product{
+    display: inline;
+    width: 70%;
+}
+
+  .new-item .my-products{
       margin: 5px;
-      float: right;
-      /* background-color: chartreuse; */
+      display: inline-block;
+    }
+    
+    .new-item{
+        float: right;
+        /* display: inline-block; */
+    }
+
+    #add-product{
+        margin-top: 20px;
+    }
+    
+    .my-products{
+      float: left;
   }
 
-
-  #item-found{
+  /* #item-found{
       border: 5px solid rgb(255, 145, 0);
       margin: 5px;
       padding: 5px;
       width: 70%;
       
-  }
+  } */
 
   .block{
-      border: 5px solid rgb(255, 145, 0);
-      margin-right: 15px;
-      padding: 5px;
-      width: 25%;
-      box-shadow: 10px 10px grey;
+    border: 5px solid rgb(255, 145, 0);
+    margin-right: 15px;
+    padding: 5px;
+    width: 65%;
+    box-shadow: 10px 10px grey;
+
+
+    /* display: none;
+    position: absolute;
+    /* background: yellow; */
+    /* text-align: center;
+    width: 400px;
+    height: 50px;
+    z-index: 9;
+
+    top: 90%;
+    left: 30%; */ 
   }
 
   .container {
@@ -122,12 +274,18 @@ table {
     padding: 5px;
     position: relative;
     text-align:left;
+
   }
 
 
   .error-msg{
       background: lightgoldenrodyellow;
       text-align: center;
+      font-size: 1.2em;
+      padding: 5px;
+      
+
+
   }
 
   .edit-cell{
@@ -154,9 +312,15 @@ table {
     font-size: 2em;
   }
 
-  .log-sign:hover{
-    
+  .rlabel{
+      margin: 30px;
   }
+
+  .inradio{
+      margin: 5px;
+  }
+
+ 
 
   .login-block{
     background: #DE6262;  /* fallback for old browsers */
@@ -167,13 +331,13 @@ width:100%;
 padding : 50px 0;
 }
 .banner-sec{background:url(https://static.pexels.com/photos/33972/pexels-photo.jpg)  no-repeat left bottom; background-size:cover; min-height:500px; border-radius: 0 10px 10px 0; padding:0;}
-.container{background:#fff; border-radius: 10px; box-shadow:15px 20px 0px rgba(0,0,0,0.1);}
+.container{background:rgb(255, 255, 255); border-radius: 10px; box-shadow:15px 20px 0px rgba(0,0,0,0.1);}
 .carousel-inner{border-radius:0 10px 10px 0;}
 .carousel-caption{text-align:left; left:5%;}
 .login-sec{padding: 50px 30px; position:relative;}
 .login-sec .copy-text{position:absolute; width:80%; bottom:20px; font-size:13px; text-align:center;}
-.login-sec .copy-text i{color:#FEB58A;}
-.login-sec .copy-text a{color:#E36262;}
+.login-sec .copy-text i{color:rgb(243, 236, 174);}
+.login-sec .copy-text a{color:rgb(182, 227, 98);}
 .login-sec h2{margin-bottom:30px; font-weight:800; font-size:30px; color: #DE6262;}
 .login-sec h2:after{content:" "; width:100px; height:5px; background:#FEB58A; display:block; margin-top:20px; border-radius:3px; margin-left:auto;margin-right:auto}
 .btn-login{background: #DE6262; color:#fff; font-weight:600;}

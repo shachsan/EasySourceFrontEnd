@@ -487,7 +487,7 @@ function loadVendorScript(){
     const divMatchProduct=document.getElementById('match-product');
     const myProducts=document.getElementById('my-prod');
     
-    tableProduct.addEventListener('dblclick', tableAction);
+    // tableProduct.addEventListener('dblclick', tableAction);
     tableProduct.addEventListener('click', tableActionOnSingleClick);
     buttonAddNewBtn.addEventListener('click', addNewItem);
     myProducts.addEventListener('click', resetTable);
@@ -1069,7 +1069,7 @@ function updateTableByCat(e){
         let $el = $(cell),
         x = 1200,
         originalColor = $el.css("background");
-        $el.css("background", "green");
+        $el.css("background", "lightgreen");
         setTimeout(function(){
             $el.css("background", originalColor);
         }, x);

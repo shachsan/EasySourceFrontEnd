@@ -58,7 +58,7 @@ $(function(){
 
     $("#signup-button").click(function(){
         $(this).fadeOut();
-        
+        $('.credentials').fadeOut();
         $("#login-button").fadeOut();
         $("#signup").fadeIn();
     })
